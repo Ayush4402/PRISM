@@ -47,7 +47,7 @@ def beautify_scalar_func(final_res, local_symbol_list, deps):
         else:                                  # genuine multi-element array: do each element
             raise ValueError("expected scalar, got array")
     final_res = sympify(final_res)
-    print(final_res)
+    #print(final_res)
 
     res_expr = nsimplify(collect(final_res, local_symbol_list))
     attribs = [dep[1] for dep in deps]

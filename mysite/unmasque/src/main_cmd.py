@@ -1393,11 +1393,24 @@ def oj_chain(k):
     joins = "".join(f" LEFT OUTER JOIN {t} ON {on}" for t, _, on in OJ_SPEC[1:k + 1])
     return f"SELECT {sel} FROM region{joins};"
 
+# Disjunction scaling workload: DJ1..DJ10 (k = number of IN values). Add before `return test_workload`.
+# Disjunction scaling workload on a string attribute: DS1..DS10 (k = number of IN values).
+# Add before `return test_workload`.
+DISJ_STR_VALUES = ['SM CASE', 'SM BOX', 'SM PACK', 'SM PKG', 'MED BAG',
+                   'MED BOX', 'MED PKG', 'MED PACK', 'LG CASE', 'LG BOX']
+
+def disj_str_query(k):
+    vals = ", ".join(f"'{v}'" for v in DISJ_STR_VALUES[:k])
+    return f"SELECT p_partkey, p_name, p_comment FROM part WHERE p_container IN ({vals});"
+
+# flags: cs2, union, oj, nep, orf  (disjunction flag is the last one)
+
 
 if __name__ == '__main__':
     workload = create_workload()
     workload += [TestQuery(f"OJ{k}", oj_chain(k), False, False, True, False) for k in range(1, 8)]
-
+    workload += [TestQuery(f"DS{k}", disj_str_query(k), False, False, False, False, True)
+                  for k in range(1, 11)]
     workload_dict = {elem.qid: i for i, elem in enumerate(workload)}
 
     signal.signal(signal.SIGTERM, signal_handler)
