@@ -1403,7 +1403,30 @@ def disj_str_query(k):
     vals = ", ".join(f"'{v}'" for v in DISJ_STR_VALUES[:k])
     return f"SELECT p_partkey, p_name, p_comment FROM part WHERE p_container IN ({vals});"
 
-# flags: cs2, union, oj, nep, orf  (disjunction flag is the last one)
+# Fixed |AUX| = 8, varying number of branches k = 2..8 (ids UK2..UK8). Add before `return test_workload`.
+# The 8 TPC-H tables form one foreign-key path, so any split into consecutive segments gives connected branches.
+FA_PATH = ["region", "nation", "supplier", "partsupp", "part", "lineitem", "orders", "customer"]
+FA_EDGES = ["r_regionkey = n_regionkey", "n_nationkey = s_nationkey", "s_suppkey = ps_suppkey",
+            "ps_partkey = p_partkey", "p_partkey = l_partkey", "l_orderkey = o_orderkey",
+            "o_custkey = c_custkey"]            # FA_EDGES[j] joins FA_PATH[j] and FA_PATH[j+1]
+FA_PROJ = {"region": "r_name, r_regionkey", "nation": "n_name, n_nationkey",
+           "supplier": "s_name, s_acctbal", "partsupp": "ps_comment, ps_supplycost",
+           "part": "p_name, p_retailprice", "lineitem": "l_comment, l_extendedprice",
+           "orders": "o_clerk, o_totalprice", "customer": "c_name, c_acctbal"}
+# number of tables per branch, for each k
+FA_SPLITS = {2: [4, 4], 3: [3, 3, 2], 4: [2, 2, 2, 2], 5: [2, 2, 2, 1, 1],
+             6: [2, 2, 1, 1, 1, 1], 7: [2, 1, 1, 1, 1, 1, 1], 8: [1] * 8}
+
+def fixed_aux_query(k):
+    branches, i = [], 0
+    for n in FA_SPLITS[k]:
+        tabs, joins = FA_PATH[i:i + n], FA_EDGES[i:i + n - 1]
+        i += n
+        q = f"SELECT {FA_PROJ[tabs[0]]} FROM {', '.join(tabs)}"   # projects from the first table of the branch
+        if joins:
+            q += " WHERE " + " AND ".join(joins)
+        branches.append(f"({q})")
+    return " UNION ALL ".join(branches) + ";"
 
 
 if __name__ == '__main__':
@@ -1411,6 +1434,8 @@ if __name__ == '__main__':
     workload += [TestQuery(f"OJ{k}", oj_chain(k), False, False, True, False) for k in range(1, 8)]
     workload += [TestQuery(f"DS{k}", disj_str_query(k), False, False, False, False, True)
                   for k in range(1, 11)]
+    workload += [TestQuery(f"UK{k}", fixed_aux_query(k), False, True, False, False) for k in FA_SPLITS]
+
     workload_dict = {elem.qid: i for i, elem in enumerate(workload)}
 
     signal.signal(signal.SIGTERM, signal_handler)
