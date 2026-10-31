@@ -1,50 +1,53 @@
 -- =====================================================================
--- Disjunction scaling, 1X data. Single table: part.
--- Query k:  SELECT * FROM part WHERE p_size IN (first k of 1,4,7,10,13,16,19,22,25,28)
+-- Disjunction scaling on a STRING attribute, 1X data. Single table: part.
+-- Query k:  SELECT * FROM part WHERE p_container IN (first k of the 10 values below)
+--   'SM CASE','SM BOX','SM PACK','SM PKG','MED BAG','MED BOX','MED PKG','MED PACK','LG CASE','LG BOX'
 -- Rows:
---   10 witness rows  : p_size = 1,4,7,...,28 (one row per IN value)
---   1000 filler rows : p_size = 1   -> in the result of EVERY query (result size does not depend on k)
---   100 reject rows : p_size = 50  -> rejected by every query
--- Values are 3 apart, so they cannot collapse into a range.
--- Set the schema in config.ini to: disj_1x
+--   10 witness rows  : one row per IN value
+--   1000 filler rows : p_container = 'SM CASE' -> in the result of EVERY query (result size does not depend on k)
+--   100 reject rows : p_container = 'WRAP DRUM' -> rejected by every query
+-- Set the schema in config.ini to: disj_str_1x
 -- =====================================================================
-DROP SCHEMA IF EXISTS disj_1x CASCADE;
-CREATE SCHEMA disj_1x;
+DROP SCHEMA IF EXISTS disj_str_1x CASCADE;
+CREATE SCHEMA disj_str_1x;
 
-CREATE TABLE disj_1x.part (
+CREATE TABLE disj_str_1x.part (
   p_partkey int PRIMARY KEY, p_name varchar(55) NOT NULL, p_mfgr char(25) NOT NULL,
   p_brand char(10) NOT NULL, p_type varchar(25) NOT NULL, p_size int NOT NULL,
   p_container char(10) NOT NULL, p_retailprice numeric(15,2) NOT NULL, p_comment varchar(23) NOT NULL);
 
 -- witnesses: one row per disjunct value
-INSERT INTO disj_1x.part
-SELECT i, 'part' || i, 'M#1', 'Brand#1', 'T', 1 + 3 * (i - 1), 'SM BOX', 900.00, 'c'
+INSERT INTO disj_str_1x.part
+SELECT i, 'part' || i, 'M#1', 'Brand#1', 'T', 1,
+       (ARRAY['SM CASE','SM BOX','SM PACK','SM PKG','MED BAG','MED BOX','MED PKG','MED PACK','LG CASE','LG BOX'])[i],
+       900.00, 'c'
 FROM generate_series(1, 10) i;
 
 -- fillers: satisfy every query
-INSERT INTO disj_1x.part
-SELECT 1000 + g, 'part' || (1000 + g), 'M#1', 'Brand#1', 'T', 1, 'SM BOX', 900.00, 'c'
+INSERT INTO disj_str_1x.part
+SELECT 1000 + g, 'part' || (1000 + g), 'M#1', 'Brand#1', 'T', 1, 'SM CASE', 900.00, 'c'
 FROM generate_series(1, 1000) g;
 
 -- rejects: satisfy no query
-INSERT INTO disj_1x.part
-SELECT 900000 + g, 'part' || (900000 + g), 'M#1', 'Brand#1', 'T', 50, 'SM BOX', 900.00, 'c'
+INSERT INTO disj_str_1x.part
+SELECT 900000 + g, 'part' || (900000 + g), 'M#1', 'Brand#1', 'T', 1, 'WRAP DRUM', 900.00, 'c'
 FROM generate_series(1, 100) g;
 
 -- validity: every IN value of every query has a witness, and every query rejects at least one row
 DO $$
-DECLARE vals int[] := ARRAY[1,4,7,10,13,16,19,22,25,28]; k int; i int; n bigint;
+DECLARE vals text[] := ARRAY['SM CASE','SM BOX','SM PACK','SM PKG','MED BAG','MED BOX','MED PKG','MED PACK','LG CASE','LG BOX'];
+        k int; i int; n bigint;
 BEGIN
   FOR k IN 1..10 LOOP
     FOR i IN 1..k LOOP
-      SELECT count(*) INTO n FROM disj_1x.part WHERE p_size = vals[i];
+      SELECT count(*) INTO n FROM disj_str_1x.part WHERE p_container::text = vals[i];
       IF n = 0 THEN RAISE EXCEPTION 'query %: value % has no witness', k, vals[i]; END IF;
     END LOOP;
-    SELECT count(*) INTO n FROM disj_1x.part WHERE NOT (p_size = ANY (vals[1:k]));
+    SELECT count(*) INTO n FROM disj_str_1x.part WHERE NOT (p_container::text = ANY (vals[1:k]));
     IF n = 0 THEN RAISE EXCEPTION 'query %: no rejected row', k; END IF;
   END LOOP;
 END $$;
 
-ANALYZE disj_1x.part;
-SELECT count(*) AS total_rows FROM disj_1x.part;
--- cleanup: DROP SCHEMA disj_1x CASCADE;
+ANALYZE disj_str_1x.part;
+SELECT count(*) AS total_rows FROM disj_str_1x.part;
+-- cleanup: DROP SCHEMA disj_str_1x CASCADE;
