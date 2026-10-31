@@ -1278,9 +1278,9 @@ select avg(ps_supplycost) as cost from part, partsupp where p_partkey = ps_partk
   and (p_brand = 'Brand#52' or p_brand = 'Brand#12');
 
 
-select p_size, ps_suppkey, count(*) as low_line_count from part. partsupp where 
+select p_size, ps_suppkey, count(*) as low_line_count from part, partsupp where 
   p_partkey = ps_partkey and p_brand IN ('Brand#52', 'Brand#34', 'Brand#15') and p_container IN ('WRAP BOX', 'MED BOX') 
-  GROUP BY p_size, ps_suppkey  ORDER BY ps_suppkey desc LIMIT 30);
+  GROUP BY p_size, ps_suppkey  ORDER BY ps_suppkey desc LIMIT 30;
 
 
 select n_name, s_acctbal, ps_availqty  from supplier, partsupp, nation where 
