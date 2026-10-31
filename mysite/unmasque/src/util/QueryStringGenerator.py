@@ -63,8 +63,8 @@ class QueryDetails:
 
     def assembleQuery(self):
         output = ""
-        #output = append_clause(output, "Select", self.select_op)
-        output = append_clause(output, "Select", "*")
+        output = append_clause(output, "Select", self.select_op)
+        #output = append_clause(output, "Select", "*")
         output = append_clause(output, "From", self.from_op)
         output = append_clause(output, "Where", self.where_op)
         output = append_clause(output, "Group By", self.group_by_op)
@@ -317,7 +317,7 @@ class QueryStringGenerator:
                 predicate_tuple = (tab, attrib, str(op), output)
         else:
             predicate = f"{tab}.{attrib} {str(op)} {format_val}"
-            predicate_tuple = (tab, attrib, str(op), format_val)
+            predicate_tuple = (tab, attrib, str(op), neg_val)
         return predicate, predicate_tuple
 
     def __consolidate_nep_filters_for_not_in(self):

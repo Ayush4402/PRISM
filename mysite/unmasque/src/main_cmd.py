@@ -1344,25 +1344,57 @@ WHERE
   AND (x29 = 1 OR y29 = 1)
   AND (x30 = 1 OR y30 = 1);""", False, False, False, False, True),
                      TestQuery("QN1", "SELECT c_name, c_acctbal FROM customer "
-            "WHERE c_mktsegment <> 'BUILDING' AND c_acctbal > 9000;", False, False, False, True, False)
-
+            "WHERE c_mktsegment <> 'BUILDING' AND c_acctbal > 9000;", False, False, False, True, False),
+        TestQuery("QN2", "SELECT o_orderkey, o_totalprice FROM orders WHERE o_orderstatus <> 'F' AND o_orderpriority <> '1-URGENT';", False, False, False, True, False)
+, TestQuery("QD2", "SELECT c_name, c_acctbal FROM customer WHERE c_mktsegment IN ('BUILDING', 'MACHINERY', 'AUTOMOBILE') AND c_acctbal > 5000;", False, False, False, False, True),
+TestQuery("nep", "SELECT l_shipmode, SUM(l_extendedprice) AS revenue FROM lineitem WHERE l_shipdate < '1994-01-01' AND l_quantity < 24 AND l_linenumber <> 4 AND l_returnflag <> 'R' GROUP BY l_shipmode LIMIT 100;", False, False, False, True, False),
+                     TestQuery("NEP1", "SELECT * FROM lineitem WHERE l_quantity <> 25;", False, False, False, True,
+                               False),
+                     TestQuery("NEP2", "SELECT * FROM lineitem WHERE l_quantity <> 25 AND l_extendedprice <> 5000.00;",
+                               False, False, False, True, False),
+                     TestQuery("NEP3",
+                               "SELECT * FROM lineitem WHERE l_quantity <> 25 AND l_extendedprice <> 5000.00 AND l_discount <> 0.05;",
+                               False, False, False, True, False),
+                     TestQuery("NEP4",
+                               "SELECT * FROM lineitem WHERE l_quantity <> 25 AND l_extendedprice <> 5000.00 AND l_discount <> 0.05 AND l_tax <> 0.04;",
+                               False, False, False, True, False),
+                     TestQuery("NEP5",
+                               "SELECT * FROM lineitem WHERE l_quantity <> 25 AND l_extendedprice <> 5000.00 AND l_discount <> 0.05 AND l_tax <> 0.04 AND l_returnflag <> 'R';",
+                               False, False, False, True, False),
+                     TestQuery("NEP6",
+                               "SELECT * FROM lineitem WHERE l_quantity <> 25 AND l_extendedprice <> 5000.00 AND l_discount <> 0.05 AND l_tax <> 0.04 AND l_returnflag <> 'R' AND l_linestatus <> 'F';",
+                               False, False, False, True, False),
+                     TestQuery("NEP7",
+                               "SELECT * FROM lineitem WHERE l_quantity <> 25 AND l_extendedprice <> 5000.00 AND l_discount <> 0.05 AND l_tax <> 0.04 AND l_returnflag <> 'R' AND l_linestatus <> 'F' AND l_shipinstruct <> 'COLLECT COD';",
+                               False, False, False, True, False),
+                     TestQuery("NEP8",
+                               "SELECT * FROM lineitem WHERE l_quantity <> 25 AND l_extendedprice <> 5000.00 AND l_discount <> 0.05 AND l_tax <> 0.04 AND l_returnflag <> 'R' AND l_linestatus <> 'F' AND l_shipinstruct <> 'COLLECT COD' AND l_shipmode <> 'AIR';",
+                               False, False, False, True, False),
+                     TestQuery("NEP9",
+                               "SELECT * FROM lineitem WHERE l_quantity <> 25 AND l_extendedprice <> 5000.00 AND l_discount <> 0.05 AND l_tax <> 0.04 AND l_returnflag <> 'R' AND l_linestatus <> 'F' AND l_shipinstruct <> 'COLLECT COD' AND l_shipmode <> 'AIR' AND l_shipdate <> '1995-06-15';",
+                               False, False, False, True, False),
+                     TestQuery("NEP10",
+                               "SELECT * FROM lineitem WHERE l_quantity <> 25 AND l_extendedprice <> 5000.00 AND l_discount <> 0.05 AND l_tax <> 0.04 AND l_returnflag <> 'R' AND l_linestatus <> 'F' AND l_shipinstruct <> 'COLLECT COD' AND l_shipmode <> 'AIR' AND l_shipdate <> '1995-06-15' AND l_commitdate <> '1995-07-01';",
+                               False, False, False, True, False),
                      ]
     return test_workload
 
 
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     workload = create_workload()
+    workload_dict = {elem.qid: i for i, elem in enumerate(workload)}
 
-    workload_dict = {}
-    for elem in workload:
-        workload_dict[elem.qid] = workload.index(elem)
+    signal.signal(signal.SIGTERM, signal_handler)
+    signal.signal(signal.SIGINT, signal_handler)
 
-    # print(workload_dict)
-
-    qid = "QN1" #sys.argv[1]
+    qid = sys.argv[1]
+    if qid not in workload_dict:
+        print(f"Unknown query id: {qid}")
+        sys.exit(2)
     hq = workload[workload_dict[qid]]
     query = hq.query
+    print(query)
+
     conn = ConnectionHelperFactory().createConnectionHelper()
     conn.config.detect_union = hq.union
     conn.config.detect_oj = hq.oj
@@ -1370,24 +1402,26 @@ if __name__ == '__main__':
     conn.config.use_cs2 = hq.cs2
     conn.config.detect_or = hq.orf
 
-    print(f"Flags: Scale Down {conn.config.scale_down}, Union {conn.config.detect_union}, OJ {conn.config.detect_oj}, "
-          f"NEP {conn.config.detect_nep}, CS2 {conn.config.use_cs2}")
+    print(f"Flags: Scale Down {conn.config.scale_down}, Union {conn.config.detect_union}, "
+          f"OJ {conn.config.detect_oj}, NEP {conn.config.detect_nep}, CS2 {conn.config.use_cs2}")
 
-    signal.signal(signal.SIGTERM, signal_handler)
-    signal.signal(signal.SIGINT, signal_handler)
+    try:
+        factory = PipeLineFactory()
+        token = factory.init_job(conn, query)
+        factory.doJob(query, token)
+        result = factory.result
 
-    factory = PipeLineFactory()
-    token = factory.init_job(conn, query)
-    factory.doJob(query, token)
-    result = factory.result
-
-    if result is not None:
-        print("============= Given Query ===============")
-        print(query)
-        print("=========== Extracted Query =============")
-        print(result)
-        print("================ Profile ================")
-        pipe = factory.get_pipeline_obj(token)
-        pipe.time_profile.print()
-    else:
-        print("I had some Trouble! Check the log file for the details..")
+        if result is not None:
+            print("============= Given Query ===============")
+            print(query)
+            print("=========== Extracted Query =============")
+            print(result)
+            print("================ Profile ================")
+            pipe = factory.get_pipeline_obj(token)
+            pipe.time_profile.print()
+        else:
+            print(f"{qid}: I had some Trouble! Check the log file for the details..")
+            sys.exit(1)
+    except Exception:
+        traceback.print_exc()
+        sys.exit(1)
