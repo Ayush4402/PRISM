@@ -111,11 +111,11 @@ UNION ALL
  GROUP BY c_custkey
  ORDER BY total ASC LIMIT 10)
 UNION ALL
-(SELECT wl_orderkey AS order_id, AVG(wl_quantity) AS total
- FROM orders, web_lineitem
- WHERE wl_orderkey = o_orderkey
+(SELECT l_orderkey AS order_id, AVG(l_quantity) AS total
+ FROM orders, lineitem
+ WHERE l_orderkey = o_orderkey
    AND o_orderdate < DATE '1996-07-01'
- GROUP BY wl_orderkey
+ GROUP BY l_orderkey
  ORDER BY total DESC LIMIT 10);
 
 -- U9
