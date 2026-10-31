@@ -1342,7 +1342,9 @@ WHERE
   AND (x27 = 1 OR y27 = 1)
   AND (x28 = 1 OR y28 = 1)
   AND (x29 = 1 OR y29 = 1)
-  AND (x30 = 1 OR y30 = 1);""", False, False, False, False, True)
+  AND (x30 = 1 OR y30 = 1);""", False, False, False, False, True),
+                     TestQuery("QN1", "SELECT c_name, c_acctbal FROM customer "
+            "WHERE c_mktsegment <> 'BUILDING' AND c_acctbal > 9000;", False, False, False, True, False)
 
                      ]
     return test_workload
@@ -1358,7 +1360,7 @@ if __name__ == '__main__':
 
     # print(workload_dict)
 
-    qid = "Customer" #sys.argv[1]
+    qid = "QN1" #sys.argv[1]
     hq = workload[workload_dict[qid]]
     query = hq.query
     conn = ConnectionHelperFactory().createConnectionHelper()
