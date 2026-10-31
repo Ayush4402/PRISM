@@ -691,7 +691,9 @@ class QueryStringGenerator:
         join_condition = f"\n\t ON {edge[0][1]}.{edge[0][0]} = {edge[1][1]}.{edge[1][0]}"
         relevant_tables = [table2] if not flag_first else [table1, table2]
         join_part = f"\n{type_of_join} {table2} {join_condition}"
-        self.from_op += f" {table1} {join_part}" if flag_first else "" + join_part
+        if join_part not in self.from_op:
+            self.from_op += f" {table1} {join_part}" if flag_first else "" + join_part
+        #print(" after " + self.from_op)
         flag_first = False
         for fp in fp_on:
             tables = find_tables_from_predicate(fp)

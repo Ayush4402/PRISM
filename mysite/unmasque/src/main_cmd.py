@@ -1379,9 +1379,25 @@ TestQuery("nep", "SELECT l_shipmode, SUM(l_extendedprice) AS revenue FROM lineit
                      ]
     return test_workload
 
+OJ_SPEC = [("region", "r_name", None),
+           ("nation", "n_name", "r_regionkey = n_regionkey"),
+           ("supplier", "s_name", "n_nationkey = s_nationkey"),
+           ("partsupp", "ps_availqty", "s_suppkey = ps_suppkey"),
+           ("part", "p_name", "ps_partkey = p_partkey"),
+           ("lineitem", "l_quantity", "p_partkey = l_partkey"),
+           ("orders", "o_totalprice", "l_orderkey = o_orderkey"),
+           ("customer", "c_name", "o_custkey = c_custkey")]
+
+def oj_chain(k):
+    sel = ", ".join(p for _, p, _ in OJ_SPEC[:k + 1])
+    joins = "".join(f" LEFT OUTER JOIN {t} ON {on}" for t, _, on in OJ_SPEC[1:k + 1])
+    return f"SELECT {sel} FROM region{joins};"
+
 
 if __name__ == '__main__':
     workload = create_workload()
+    workload += [TestQuery(f"OJ{k}", oj_chain(k), False, False, True, False) for k in range(1, 8)]
+
     workload_dict = {elem.qid: i for i, elem in enumerate(workload)}
 
     signal.signal(signal.SIGTERM, signal_handler)
