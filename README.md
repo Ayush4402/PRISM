@@ -1,3 +1,56 @@
+# Extractable Query Class:
+---------------------------------------------------------------------------------------
+
+query      ::= flat | branch (union_op branch)+
+branch     ::= "(" flat ")"
+union_op   ::= UNION ALL
+
+flat       ::= SELECT list(item) FROM source
+               [WHERE condition] [GROUP BY list(column)]
+               [ORDER BY list(order_item)] [LIMIT int]
+
+item       ::= expression [AS identifier]
+expression ::= scalar | aggregate "(" scalar ")" | COUNT(*)
+aggregate  ::= SUM | AVG | MIN | MAX | COUNT
+scalar     ::= column | constant | "(" scalar ")"
+             | scalar arithmetic scalar
+arithmetic ::= "+" | "-" | "*" | "/"
+
+source     ::= list(table) | table (join_op table ON condition)+
+join_op    ::= JOIN | INNER JOIN | LEFT OUTER JOIN
+             | RIGHT OUTER JOIN | FULL OUTER JOIN
+
+condition  ::= conjunct (AND conjunct)*
+conjunct   ::= atom (OR atom)* | column IN "(" list(constant) ")"
+             | column <> constant | column NOT LIKE string
+atom       ::= column comparison (column | constant)
+             | column LIKE string
+comparison ::= "=" | "<" | "<=" | ">" | ">="
+
+order_item ::= (identifier | column) [ASC | DESC]
+column     ::= identifier ["." identifier]
+constant   ::= number | date | string
+
+------------------------------------------------------------------------------
+
+## Observability Conditions
+
+The conditions under which PRISM can deterministically extract a hidden query `Q_H` from an initial database `D_I`, in a single list. Each item is tagged with the construct it applies to.
+
+1. **[General]** `D_I` is NULL-free (if it is not, a NULL-free sample can be constructed from it).
+2. **[General]** `Q_H` produces a populated result on `D_I`. When outer joins or unions are present, the result must be a fully instantiated result (FIT-result), i.e., it contains at least one tuple with no NULL values.
+3. **[General]** No table is repeated in the `FROM` clause of `Q_H` (no self-joins).
+4. **[General]** `Q_H` is conjunctive, extended to a conjunction of clauses where each clause is a disjunction of atomic predicates.
+5. **[General]** `Q_H` is not a pure count query.
+6. **[Union]** Each subquery `q_i` independently produces a FIT-result on `D_I`.
+7. **[Union]** Each subquery `q_i` is not a pure count query.
+8. **[Union]** For `i ≠ j`, `AUX(q_i)` is not a subset of `AUX(q_j)`, where `AUX(q_i)` is the set of tables of `q_i` that do not occur in every subquery (the non-containment condition).
+9. **[Algebraic predicates (ALP)]** No condition beyond the general ones.
+10. **[Negation (NEP)]** For each negation predicate `col <> val` in `Q_H`, `D_I` contains at least one tuple with `col = val`.
+11. **[Disjunction]** For each disjunct `p_i^j` of each clause `c_j`, `D_I` contains a witness tuple that satisfies `p_i^j` and every other clause `c_l` (`l ≠ j`), but falsifies all other disjuncts of `c_j`.
+12. **[Outer joins]** The projection of `Q_H` contains at least one non-aggregated attribute from every participating relation, so that the NULL-extended side of an outer join is visible in the result.
+
+Remark: `HAVING` clause support is added within the flat-scope. It is not integrated with the new features present in `PRISM`.
 
 # Setting up the PRISM Code:
 -------------------------------------------------------------------------------------------------------------------------------------------------

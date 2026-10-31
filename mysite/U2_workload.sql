@@ -111,11 +111,11 @@ UNION ALL
  GROUP BY c_custkey
  ORDER BY total ASC LIMIT 10)
 UNION ALL
-(SELECT wl_orderkey AS order_id, AVG(wl_quantity) AS total
- FROM orders, web_lineitem
- WHERE wl_orderkey = o_orderkey
+(SELECT l_orderkey AS order_id, AVG(l_quantity) AS total
+ FROM orders, lineitem
+ WHERE l_orderkey = o_orderkey
    AND o_orderdate < DATE '1996-07-01'
- GROUP BY wl_orderkey
+ GROUP BY l_orderkey
  ORDER BY total DESC LIMIT 10);
 
 -- U9
@@ -419,7 +419,7 @@ UNION ALL
     FROM lineitem, part, supplier
     WHERE
         l_partkey = p_partkey
-        AND s_suppkey = s_suppkey
+        AND s_suppkey = l_suppkey
         AND l_shipdate > '1995-01-01'
         AND s_acctbal >= l_extendedprice
         AND p_partkey < 15000
@@ -1278,9 +1278,9 @@ select avg(ps_supplycost) as cost from part, partsupp where p_partkey = ps_partk
   and (p_brand = 'Brand#52' or p_brand = 'Brand#12');
 
 
-select p_size, ps_suppkey, count(*) as low_line_count from part. partsupp where 
+select p_size, ps_suppkey, count(*) as low_line_count from part, partsupp where 
   p_partkey = ps_partkey and p_brand IN ('Brand#52', 'Brand#34', 'Brand#15') and p_container IN ('WRAP BOX', 'MED BOX') 
-  GROUP BY p_size, ps_suppkey  ORDER BY ps_suppkey desc LIMIT 30);
+  GROUP BY p_size, ps_suppkey  ORDER BY ps_suppkey desc LIMIT 30;
 
 
 select n_name, s_acctbal, ps_availqty  from supplier, partsupp, nation where 
