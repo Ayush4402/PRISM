@@ -419,7 +419,7 @@ UNION ALL
     FROM lineitem, part, supplier
     WHERE
         l_partkey = p_partkey
-        AND s_suppkey = s_suppkey
+        AND s_suppkey = l_suppkey
         AND l_shipdate > '1995-01-01'
         AND s_acctbal >= l_extendedprice
         AND p_partkey < 15000
