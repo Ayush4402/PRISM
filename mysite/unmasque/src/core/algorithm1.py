@@ -31,10 +31,11 @@ def algo(db, QH):
     if len(MaxSide) > 1:
         MaxSide.discard(frozenset())
 
+    common = common_tables(db)
     Partials = set()
     for s in MaxSide:
         cc = set(Partial_QH.difference(s))
-        cc.update(db.comtabs)
+        cc.update(common)
         Partials.add(frozenset(cc))
 
     prettY_str = construct_pretty_print_string(Partials)
@@ -116,6 +117,18 @@ def update_max_side(u, max_side):
         return
     max_side.difference_update({s for s in max_side if s < u})   # drop proper subsets of u
     max_side.add(u)
+
+
+def common_tables(db):
+    """Common tables as real table names only.
+    db.comtabs can hold a status string (e.g. "OK") when there is no common table; iterating such a
+    string would add its characters ('O', 'K', ' ') to every FROM clause."""
+    com = db.comtabs
+    if com is None:
+        return set()
+    if isinstance(com, str):
+        com = [com]
+    return set(com) & set(db.fromtabs)
 
 
 def construct_pretty_print_string(Partials):

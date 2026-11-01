@@ -1428,6 +1428,28 @@ def fixed_aux_query(k):
         branches.append(f"({q})")
     return " UNION ALL ".join(branches) + ";"
 
+# Union scaling workload: UN3..UN8 (the number is |AUX|, the number of partial tables). 3 branches throughout.
+# Add before `return test_workload`.
+UNION_BRANCHES = [  # (tables in growth order, projection, join conditions in growth order)
+    (["supplier", "nation", "region"], "s_name, s_acctbal",
+     ["s_nationkey = n_nationkey", "n_regionkey = r_regionkey"]),
+    (["customer", "orders", "lineitem"], "c_name, c_acctbal",
+     ["c_custkey = o_custkey", "o_orderkey = l_orderkey"]),
+    (["part", "partsupp"], "p_name, p_retailprice",
+     ["p_partkey = ps_partkey"]),
+]
+# tables used per branch, for each |AUX|
+UNION_SIZES = {3: (1, 1, 1), 4: (2, 1, 1), 5: (2, 2, 1), 6: (2, 2, 2), 7: (3, 2, 2), 8: (3, 3, 2)}
+
+def union_query(m):
+    branches = []
+    for (tabs, proj, joins), n in zip(UNION_BRANCHES, UNION_SIZES[m]):
+        q = f"SELECT {proj} FROM {', '.join(tabs[:n])}"
+        if n > 1:
+            q += " WHERE " + " AND ".join(joins[:n - 1])
+        branches.append(f"({q})")
+    return " UNION ALL ".join(branches) + ";"
+
 
 if __name__ == '__main__':
     workload = create_workload()
@@ -1435,6 +1457,7 @@ if __name__ == '__main__':
     workload += [TestQuery(f"DS{k}", disj_str_query(k), False, False, False, False, True)
                   for k in range(1, 11)]
     workload += [TestQuery(f"UK{k}", fixed_aux_query(k), False, True, False, False) for k in FA_SPLITS]
+    workload += [TestQuery(f"UN{m}", union_query(m), False, True, False, False) for m in UNION_SIZES]
 
     workload_dict = {elem.qid: i for i, elem in enumerate(workload)}
 

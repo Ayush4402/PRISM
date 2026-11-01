@@ -29,6 +29,22 @@ DATASETS = {
             ("Base Data", [0.99, 0.99, 1.05, 1.1, 1.16, 1.19, 1.24, 1.28, 1.36, 1.48], 0.99),
             ("10X Data",  [1.4, 1.42, 1.47, 1.55, 1.61, 1.68, 1.71, 1.8, 1.91, 2.06], 0.99),
         ]
+    },
+    "uk": {
+        "unit": "Union Branche",
+        "x": [2, 3, 4, 5, 6, 7, 8],
+        "series": [
+            ("Base Data", [4.5, 6.09, 6.92, 7.53, 8.94, 8.95, 9.19], 4.5),
+            ("10X Data", [7.15, 9.35, 12.36, 16.79, 22.88, 26.97, 28.17], 4.5),
+        ]
+    },
+    "un": {
+        "unit": "|AUX|",
+        "x": [3, 4, 5, 6, 7, 8],
+        "series": [
+            ("Base Data", [2.56, 2.69, 3.42, 4.01, 4.59, 6.17], 2.56),
+            ("10X Data", [4.05, 4.57, 6.3, 6.7, 8.66, 10.6], 2.56),
+        ]
     }
 }
 # -------------------------------------------------------------------------------
@@ -41,7 +57,7 @@ args = parser.parse_args()
 cfg = DATASETS[args.data]
 x, SERIES, unit = cfg["x"], cfg["series"], cfg["unit"]
 
-X_LABEL = f"# {unit}s"                                           # "# NEPs" / "# OJs"
+X_LABEL = f"# {unit}"                                           # "# NEPs" / "# OJs"
 Y_LABEL = f"Slow Down Factor"   # "1 NEP case" / "1 OJ case"
 OUTFILE = f"{args.data}_scale_plot.png"                           # nep_scale_plot.png / oj_scale_plot.png
 

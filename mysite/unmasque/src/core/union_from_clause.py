@@ -67,7 +67,11 @@ class UnionFromClause(Schema, AppExtractorBase):
     def get_comTabs(self, QH, tabs):
         if self.comtabs is None:
             self.fromClause.set_check_relations(tabs)
-            self.comtabs = self.fromClause.doJob(QH, FromClause.TYPE_RENAME)
+            res = self.fromClause.doJob(QH, FromClause.TYPE_RENAME)
             self.fromClause.reset_check_relations()
+            if isinstance(res, str):
+                self.logger.error(f"common-table check failed, got {res!r} instead of a table list")
+                res = []
+            self.comtabs = set(res or []) & set(tabs)
         return self.comtabs
 
