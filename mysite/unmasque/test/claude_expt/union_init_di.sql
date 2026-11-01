@@ -7,14 +7,14 @@
 DROP SCHEMA IF EXISTS fixaux_1x CASCADE;
 CREATE SCHEMA fixaux_1x;
 
-CREATE TABLE fixaux_1x.region (r_regionkey int PRIMARY KEY, r_name char(25) NOT NULL, r_comment varchar(152) NOT NULL);
-CREATE TABLE fixaux_1x.nation (n_nationkey int PRIMARY KEY, n_name char(25) NOT NULL, n_regionkey int NOT NULL, n_comment varchar(152) NOT NULL);
-CREATE TABLE fixaux_1x.supplier (s_suppkey int PRIMARY KEY, s_name char(25) NOT NULL, s_address varchar(40) NOT NULL, s_nationkey int NOT NULL, s_phone char(15) NOT NULL, s_acctbal numeric(15,2) NOT NULL, s_comment varchar(101) NOT NULL);
-CREATE TABLE fixaux_1x.customer (c_custkey int PRIMARY KEY, c_name varchar(25) NOT NULL, c_address varchar(40) NOT NULL, c_nationkey int NOT NULL, c_phone char(15) NOT NULL, c_acctbal numeric(15,2) NOT NULL, c_mktsegment char(10) NOT NULL, c_comment varchar(117) NOT NULL);
-CREATE TABLE fixaux_1x.part (p_partkey int PRIMARY KEY, p_name varchar(55) NOT NULL, p_mfgr char(25) NOT NULL, p_brand char(10) NOT NULL, p_type varchar(25) NOT NULL, p_size int NOT NULL, p_container char(10) NOT NULL, p_retailprice numeric(15,2) NOT NULL, p_comment varchar(23) NOT NULL);
-CREATE TABLE fixaux_1x.partsupp (ps_partkey int NOT NULL, ps_suppkey int NOT NULL, ps_availqty int NOT NULL, ps_supplycost numeric(15,2) NOT NULL, ps_comment varchar(199) NOT NULL, PRIMARY KEY (ps_partkey, ps_suppkey));
-CREATE TABLE fixaux_1x.orders (o_orderkey int PRIMARY KEY, o_custkey int NOT NULL, o_orderstatus char(1) NOT NULL, o_totalprice numeric(15,2) NOT NULL, o_orderdate date NOT NULL, o_orderpriority char(15) NOT NULL, o_clerk char(15) NOT NULL, o_shippriority int NOT NULL, o_comment varchar(79) NOT NULL);
-CREATE TABLE fixaux_1x.lineitem (l_orderkey int NOT NULL, l_partkey int NOT NULL, l_suppkey int NOT NULL, l_linenumber int NOT NULL, l_quantity numeric(15,2) NOT NULL, l_extendedprice numeric(15,2) NOT NULL, l_discount numeric(15,2) NOT NULL, l_tax numeric(15,2) NOT NULL, l_returnflag char(1) NOT NULL, l_linestatus char(1) NOT NULL, l_shipdate date NOT NULL, l_commitdate date NOT NULL, l_receiptdate date NOT NULL, l_shipinstruct char(25) NOT NULL, l_shipmode char(10) NOT NULL, l_comment varchar(44) NOT NULL, PRIMARY KEY (l_orderkey, l_linenumber));
+CREATE TABLE fixaux_1x.region (r_regionkey int NOT NULL, r_name char(25) NOT NULL, r_comment varchar(152) NOT NULL);
+CREATE TABLE fixaux_1x.nation (n_nationkey int NOT NULL, n_name char(25) NOT NULL, n_regionkey int NOT NULL, n_comment varchar(152) NOT NULL);
+CREATE TABLE fixaux_1x.supplier (s_suppkey int NOT NULL, s_name char(25) NOT NULL, s_address varchar(40) NOT NULL, s_nationkey int NOT NULL, s_phone char(15) NOT NULL, s_acctbal numeric(15,2) NOT NULL, s_comment varchar(101) NOT NULL);
+CREATE TABLE fixaux_1x.customer (c_custkey int NOT NULL, c_name varchar(25) NOT NULL, c_address varchar(40) NOT NULL, c_nationkey int NOT NULL, c_phone char(15) NOT NULL, c_acctbal numeric(15,2) NOT NULL, c_mktsegment char(10) NOT NULL, c_comment varchar(117) NOT NULL);
+CREATE TABLE fixaux_1x.part (p_partkey int NOT NULL, p_name varchar(55) NOT NULL, p_mfgr char(25) NOT NULL, p_brand char(10) NOT NULL, p_type varchar(25) NOT NULL, p_size int NOT NULL, p_container char(10) NOT NULL, p_retailprice numeric(15,2) NOT NULL, p_comment varchar(23) NOT NULL);
+CREATE TABLE fixaux_1x.partsupp (ps_partkey int NOT NULL, ps_suppkey int NOT NULL, ps_availqty int NOT NULL, ps_supplycost numeric(15,2) NOT NULL, ps_comment varchar(199) NOT NULL);
+CREATE TABLE fixaux_1x.orders (o_orderkey int NOT NULL, o_custkey int NOT NULL, o_orderstatus char(1) NOT NULL, o_totalprice numeric(15,2) NOT NULL, o_orderdate date NOT NULL, o_orderpriority char(15) NOT NULL, o_clerk char(15) NOT NULL, o_shippriority int NOT NULL, o_comment varchar(79) NOT NULL);
+CREATE TABLE fixaux_1x.lineitem (l_orderkey int NOT NULL, l_partkey int NOT NULL, l_suppkey int NOT NULL, l_linenumber int NOT NULL, l_quantity numeric(15,2) NOT NULL, l_extendedprice numeric(15,2) NOT NULL, l_discount numeric(15,2) NOT NULL, l_tax numeric(15,2) NOT NULL, l_returnflag char(1) NOT NULL, l_linestatus char(1) NOT NULL, l_shipdate date NOT NULL, l_commitdate date NOT NULL, l_receiptdate date NOT NULL, l_shipinstruct char(25) NOT NULL, l_shipmode char(10) NOT NULL, l_comment varchar(44) NOT NULL);
 
 -- chain k has one row in every table; all join columns equal k
 INSERT INTO fixaux_1x.region   SELECT k, 'REGION' || k, 'c' FROM generate_series(1, 1000) k;
@@ -59,4 +59,20 @@ SELECT count(*) AS total_rows FROM (
   SELECT 1 FROM fixaux_1x.region UNION ALL SELECT 1 FROM fixaux_1x.nation UNION ALL SELECT 1 FROM fixaux_1x.supplier
   UNION ALL SELECT 1 FROM fixaux_1x.customer UNION ALL SELECT 1 FROM fixaux_1x.part UNION ALL SELECT 1 FROM fixaux_1x.partsupp
   UNION ALL SELECT 1 FROM fixaux_1x.orders UNION ALL SELECT 1 FROM fixaux_1x.lineitem) t;
+-- expected: 0 primary keys, 0 foreign keys
+SELECT count(*) FILTER (WHERE contype = 'p') AS primary_keys, count(*) FILTER (WHERE contype = 'f') AS foreign_keys
+FROM pg_constraint WHERE connamespace = 'fixaux_1x'::regnamespace;
 -- cleanup: DROP SCHEMA fixaux_1x CASCADE;
+
+-- Drops all primary-key, foreign-key and unique constraints in one schema (foreign keys first).
+-- Use it on schemas that already exist (e.g. nep_scale, oj_scale). Change the schema name below.
+DO $$
+DECLARE r record; s text := 'fixaux_1x';
+BEGIN
+  FOR r IN SELECT conrelid::regclass AS t, conname FROM pg_constraint
+           WHERE connamespace = s::regnamespace AND contype IN ('f', 'p', 'u')
+           ORDER BY contype  -- 'f' sorts before 'p' and 'u'
+  LOOP
+    EXECUTE format('ALTER TABLE %s DROP CONSTRAINT %I', r.t, r.conname);
+  END LOOP;
+END $$;
