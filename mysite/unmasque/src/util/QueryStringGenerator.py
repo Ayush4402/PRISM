@@ -64,6 +64,7 @@ class QueryDetails:
     def assembleQuery(self):
         output = ""
         output = append_clause(output, "Select", self.select_op)
+        #output = append_clause(output, "Select", "*")
         output = append_clause(output, "From", self.from_op)
         output = append_clause(output, "Where", self.where_op)
         output = append_clause(output, "Group By", self.group_by_op)
@@ -316,7 +317,7 @@ class QueryStringGenerator:
                 predicate_tuple = (tab, attrib, str(op), output)
         else:
             predicate = f"{tab}.{attrib} {str(op)} {format_val}"
-            predicate_tuple = (tab, attrib, str(op), format_val)
+            predicate_tuple = (tab, attrib, str(op), neg_val)
         return predicate, predicate_tuple
 
     def __consolidate_nep_filters_for_not_in(self):
@@ -690,7 +691,9 @@ class QueryStringGenerator:
         join_condition = f"\n\t ON {edge[0][1]}.{edge[0][0]} = {edge[1][1]}.{edge[1][0]}"
         relevant_tables = [table2] if not flag_first else [table1, table2]
         join_part = f"\n{type_of_join} {table2} {join_condition}"
-        self.from_op += f" {table1} {join_part}" if flag_first else "" + join_part
+        if join_part not in self.from_op:
+            self.from_op += f" {table1} {join_part}" if flag_first else "" + join_part
+        #print(" after " + self.from_op)
         flag_first = False
         for fp in fp_on:
             tables = find_tables_from_predicate(fp)

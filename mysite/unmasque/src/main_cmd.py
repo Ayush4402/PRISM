@@ -1185,23 +1185,293 @@ and o1.o_orderdate between date '1995-01-01' and date '1995-12-31'
 and o2.o1_orderdate between date '1995-01-01' and date '1995-12-31'
 group by c_address;""", False, True, False, False),
 
+                     TestQuery("Anantha-Q2", """SELECT *
+FROM variable_assignments
+WHERE 
+   (var1_val = 0 AND var2_val = 0 AND var3_val = 0 AND var4_val = 1 AND   var5_val = 1 AND var6_val = 0 AND var7_val = 0 AND var8_val = 0 AND var9_val = 0 AND var10_val = 0)
+OR (var1_val = 0 AND var2_val = 1 AND var3_val = 0 AND var4_val = 0 AND var5_val = 1 AND var6_val = 1 AND var7_val = 0 AND var8_val = 1 AND var9_val = 0 AND var10_val = 1)
+OR (var1_val = 1 AND var2_val = 0 AND var3_val = 1 AND var4_val = 1 AND var5_val = 0 AND var6_val = 0 AND var7_val = 1 AND var8_val = 0 AND var9_val = 1 AND var10_val = 0)
+OR (var1_val = 1 AND var2_val = 1 AND var3_val = 1 AND var4_val = 0 AND var5_val = 0 AND var6_val = 1 AND var7_val = 1 AND var8_val = 1 AND var9_val = 1 AND var10_val = 1)
+;""", False, False, False, False, True),
+
+                     TestQuery("Anantha-Q1", """SELECT *
+    FROM variable_assignments
+    WHERE 
+       WHERE
+  (
+    (var1_val = 0 AND var2_val = 0 AND var3_val = 0 AND var4_val = 1)
+    OR (var1_val = 0 AND var2_val = 0 AND var3_val = 1 AND var4_val = 0)
+    OR (var1_val = 0 AND var2_val = 1 AND var3_val = 0 AND var4_val = 0)
+    OR (var1_val = 0 AND var2_val = 1 AND var3_val = 1 AND var4_val = 1)
+    OR (var1_val = 1 AND var2_val = 0 AND var3_val = 0 AND var4_val = 0)
+    OR (var1_val = 1 AND var2_val = 0 AND var3_val = 1 AND var4_val = 1)
+    OR (var1_val = 1 AND var2_val = 1 AND var3_val = 0 AND var4_val = 1)
+    OR (var1_val = 1 AND var2_val = 1 AND var3_val = 1 AND var4_val = 0)
+  )
+
+  AND (
+    (var2_val = 0 AND var3_val = 0 AND var4_val = 0 AND var5_val = 0)
+    OR (var2_val = 0 AND var3_val = 0 AND var4_val = 1 AND var5_val = 1)
+    OR (var2_val = 0 AND var3_val = 1 AND var4_val = 0 AND var5_val = 1)
+    OR (var2_val = 0 AND var3_val = 1 AND var4_val = 1 AND var5_val = 0)
+    OR (var2_val = 1 AND var3_val = 0 AND var4_val = 0 AND var5_val = 1)
+    OR (var2_val = 1 AND var3_val = 0 AND var4_val = 1 AND var5_val = 0)
+    OR (var2_val = 1 AND var3_val = 1 AND var4_val = 0 AND var5_val = 0)
+    OR (var2_val = 1 AND var3_val = 1 AND var4_val = 1 AND var5_val = 1)
+  )
+
+  AND (
+    (var3_val = 0 AND var4_val = 0 AND var5_val = 0 AND var6_val = 0)
+    OR (var3_val = 0 AND var4_val = 0 AND var5_val = 1 AND var6_val = 1)
+    OR (var3_val = 0 AND var4_val = 1 AND var5_val = 0 AND var6_val = 1)
+    OR (var3_val = 0 AND var4_val = 1 AND var5_val = 1 AND var6_val = 0)
+    OR (var3_val = 1 AND var4_val = 0 AND var5_val = 0 AND var6_val = 1)
+    OR (var3_val = 1 AND var4_val = 0 AND var5_val = 1 AND var6_val = 0)
+    OR (var3_val = 1 AND var4_val = 1 AND var5_val = 0 AND var6_val = 0)
+    OR (var3_val = 1 AND var4_val = 1 AND var5_val = 1 AND var6_val = 1)
+  )
+
+  AND (
+    (var4_val = 0 AND var5_val = 0 AND var6_val = 0 AND var7_val = 0)
+    OR (var4_val = 0 AND var5_val = 0 AND var6_val = 1 AND var7_val = 1)
+    OR (var4_val = 0 AND var5_val = 1 AND var6_val = 0 AND var7_val = 1)
+    OR (var4_val = 0 AND var5_val = 1 AND var6_val = 1 AND var7_val = 0)
+    OR (var4_val = 1 AND var5_val = 0 AND var6_val = 0 AND var7_val = 1)
+    OR (var4_val = 1 AND var5_val = 0 AND var6_val = 1 AND var7_val = 0)
+    OR (var4_val = 1 AND var5_val = 1 AND var6_val = 0 AND var7_val = 0)
+    OR (var4_val = 1 AND var5_val = 1 AND var6_val = 1 AND var7_val = 1)
+  )
+
+  AND (
+    (var5_val = 0 AND var6_val = 0 AND var7_val = 0 AND var8_val = 1)
+    OR (var5_val = 0 AND var6_val = 0 AND var7_val = 1 AND var8_val = 0)
+    OR (var5_val = 0 AND var6_val = 1 AND var7_val = 0 AND var8_val = 0)
+    OR (var5_val = 0 AND var6_val = 1 AND var7_val = 1 AND var8_val = 1)
+    OR (var5_val = 1 AND var6_val = 0 AND var7_val = 0 AND var8_val = 0)
+    OR (var5_val = 1 AND var6_val = 0 AND var7_val = 1 AND var8_val = 1)
+    OR (var5_val = 1 AND var6_val = 1 AND var7_val = 0 AND var8_val = 1)
+    OR (var5_val = 1 AND var6_val = 1 AND var7_val = 1 AND var8_val = 0)
+  )
+
+  AND (
+    (var6_val = 0 AND var7_val = 0 AND var8_val = 0 AND var9_val = 0)
+    OR (var6_val = 0 AND var7_val = 0 AND var8_val = 1 AND var9_val = 1)
+    OR (var6_val = 0 AND var7_val = 1 AND var8_val = 0 AND var9_val = 1)
+    OR (var6_val = 0 AND var7_val = 1 AND var8_val = 1 AND var9_val = 0)
+    OR (var6_val = 1 AND var7_val = 0 AND var8_val = 0 AND var9_val = 1)
+    OR (var6_val = 1 AND var7_val = 0 AND var8_val = 1 AND var9_val = 0)
+    OR (var6_val = 1 AND var7_val = 1 AND var8_val = 0 AND var9_val = 0)
+    OR (var6_val = 1 AND var7_val = 1 AND var8_val = 1 AND var9_val = 1)
+  )
+
+  AND (
+    (var7_val = 0 AND var8_val = 0 AND var9_val = 0 AND var10_val = 0)
+    OR (var7_val = 0 AND var8_val = 0 AND var9_val = 1 AND var10_val = 1)
+    OR (var7_val = 0 AND var8_val = 1 AND var9_val = 0 AND var10_val = 1)
+    OR (var7_val = 0 AND var8_val = 1 AND var9_val = 1 AND var10_val = 0)
+    OR (var7_val = 1 AND var8_val = 0 AND var9_val = 0 AND var10_val = 1)
+    OR (var7_val = 1 AND var8_val = 0 AND var9_val = 1 AND var10_val = 0)
+    OR (var7_val = 1 AND var8_val = 1 AND var9_val = 0 AND var10_val = 0)
+    OR (var7_val = 1 AND var8_val = 1 AND var9_val = 1 AND var10_val = 1)
+  )
+
+  AND (
+    (var8_val = 0 AND var9_val = 0 AND var10_val = 0 AND var1_val = 0)
+    OR (var8_val = 0 AND var9_val = 0 AND var10_val = 1 AND var1_val = 1)
+    OR (var8_val = 0 AND var9_val = 1 AND var10_val = 0 AND var1_val = 1)
+    OR (var8_val = 0 AND var9_val = 1 AND var10_val = 1 AND var1_val = 0)
+    OR (var8_val = 1 AND var9_val = 0 AND var10_val = 0 AND var1_val = 1)
+    OR (var8_val = 1 AND var9_val = 0 AND var10_val = 1 AND var1_val = 0)
+    OR (var8_val = 1 AND var9_val = 1 AND var10_val = 0 AND var1_val = 0)
+    OR (var8_val = 1 AND var9_val = 1 AND var10_val = 1 AND var1_val = 1)
+  )
+
+
+  AND (
+    (var9_val = 0 AND var10_val = 0 AND var1_val = 0 AND var2_val = 0)
+    OR (var9_val = 0 AND var10_val = 0 AND var1_val = 1 AND var2_val = 1)
+    OR (var9_val = 0 AND var10_val = 1 AND var1_val = 0 AND var2_val = 1)
+    OR (var9_val = 0 AND var10_val = 1 AND var1_val = 1 AND var2_val = 0)
+    OR (var9_val = 1 AND var10_val = 0 AND var1_val = 0 AND var2_val = 1)
+    OR (var9_val = 1 AND var10_val = 0 AND var1_val = 1 AND var2_val = 0)
+    OR (var9_val = 1 AND var10_val = 1 AND var1_val = 0 AND var2_val = 0)
+    OR (var9_val = 1 AND var10_val = 1 AND var1_val = 1 AND var2_val = 1)
+  )
+
+
+  AND (
+    (var10_val = 0 AND var1_val = 0 AND var2_val = 0 AND var3_val = 0)
+    OR (var10_val = 0 AND var1_val = 0 AND var2_val = 1 AND var3_val = 1)
+    OR (var10_val = 0 AND var1_val = 1 AND var2_val = 0 AND var3_val = 1)
+    OR (var10_val = 0 AND var1_val = 1 AND var2_val = 1 AND var3_val = 0)
+    OR (var10_val = 1 AND var1_val = 0 AND var2_val = 0 AND var3_val = 1)
+    OR (var10_val = 1 AND var1_val = 0 AND var2_val = 1 AND var3_val = 0)
+    OR (var10_val = 1 AND var1_val = 1 AND var2_val = 0 AND var3_val = 0)
+    OR (var10_val = 1 AND var1_val = 1 AND var2_val = 1 AND var3_val = 1)
+  );""",
+                               False, False, False, False, True),
+                     TestQuery("Customer", """SELECT * 
+FROM customer_buying_record
+WHERE 
+      (x1 = 1 OR y1 = 1)
+  AND (x2 = 1 OR y2 = 1)
+  AND (x3 = 1 OR y3 = 1)
+  AND (x4 = 1 OR y4 = 1)
+  AND (x5 = 1 OR y5 = 1)
+  AND (x6 = 1 OR y6 = 1)
+  AND (x7 = 1 OR y7 = 1)
+  AND (x8 = 1 OR y8 = 1)
+  AND (x9 = 1 OR y9 = 1)
+  AND (x10 = 1 OR y10 = 1)
+  AND (x11 = 1 OR y11 = 1)
+  AND (x12 = 1 OR y12 = 1)
+  AND (x13 = 1 OR y13 = 1)
+  AND (x14 = 1 OR y14 = 1)
+  AND (x15 = 1 OR y15 = 1)
+  AND (x16 = 1 OR y16 = 1)
+  AND (x17 = 1 OR y17 = 1)
+  AND (x18 = 1 OR y18 = 1)
+  AND (x19 = 1 OR y19 = 1)
+  AND (x20 = 1 OR y20 = 1)
+  AND (x21 = 1 OR y21 = 1)
+  AND (x22 = 1 OR y22 = 1)
+  AND (x23 = 1 OR y23 = 1)
+  AND (x24 = 1 OR y24 = 1)
+  AND (x25 = 1 OR y25 = 1)
+  AND (x26 = 1 OR y26 = 1)
+  AND (x27 = 1 OR y27 = 1)
+  AND (x28 = 1 OR y28 = 1)
+  AND (x29 = 1 OR y29 = 1)
+  AND (x30 = 1 OR y30 = 1);""", False, False, False, False, True),
+                     TestQuery("QN1", "SELECT c_name, c_acctbal FROM customer "
+            "WHERE c_mktsegment <> 'BUILDING' AND c_acctbal > 9000;", False, False, False, True, False),
+        TestQuery("QN2", "SELECT o_orderkey, o_totalprice FROM orders WHERE o_orderstatus <> 'F' AND o_orderpriority <> '1-URGENT';", False, False, False, True, False)
+, TestQuery("QD2", "SELECT c_name, c_acctbal FROM customer WHERE c_mktsegment IN ('BUILDING', 'MACHINERY', 'AUTOMOBILE') AND c_acctbal > 5000;", False, False, False, False, True),
+TestQuery("nep", "SELECT l_shipmode, SUM(l_extendedprice) AS revenue FROM lineitem WHERE l_shipdate < '1994-01-01' AND l_quantity < 24 AND l_linenumber <> 4 AND l_returnflag <> 'R' GROUP BY l_shipmode LIMIT 100;", False, False, False, True, False),
+                     TestQuery("NEP1", "SELECT * FROM lineitem WHERE l_quantity <> 25;", False, False, False, True,
+                               False),
+                     TestQuery("NEP2", "SELECT * FROM lineitem WHERE l_quantity <> 25 AND l_extendedprice <> 5000.00;",
+                               False, False, False, True, False),
+                     TestQuery("NEP3",
+                               "SELECT * FROM lineitem WHERE l_quantity <> 25 AND l_extendedprice <> 5000.00 AND l_discount <> 0.05;",
+                               False, False, False, True, False),
+                     TestQuery("NEP4",
+                               "SELECT * FROM lineitem WHERE l_quantity <> 25 AND l_extendedprice <> 5000.00 AND l_discount <> 0.05 AND l_tax <> 0.04;",
+                               False, False, False, True, False),
+                     TestQuery("NEP5",
+                               "SELECT * FROM lineitem WHERE l_quantity <> 25 AND l_extendedprice <> 5000.00 AND l_discount <> 0.05 AND l_tax <> 0.04 AND l_returnflag <> 'R';",
+                               False, False, False, True, False),
+                     TestQuery("NEP6",
+                               "SELECT * FROM lineitem WHERE l_quantity <> 25 AND l_extendedprice <> 5000.00 AND l_discount <> 0.05 AND l_tax <> 0.04 AND l_returnflag <> 'R' AND l_linestatus <> 'F';",
+                               False, False, False, True, False),
+                     TestQuery("NEP7",
+                               "SELECT * FROM lineitem WHERE l_quantity <> 25 AND l_extendedprice <> 5000.00 AND l_discount <> 0.05 AND l_tax <> 0.04 AND l_returnflag <> 'R' AND l_linestatus <> 'F' AND l_shipinstruct <> 'COLLECT COD';",
+                               False, False, False, True, False),
+                     TestQuery("NEP8",
+                               "SELECT * FROM lineitem WHERE l_quantity <> 25 AND l_extendedprice <> 5000.00 AND l_discount <> 0.05 AND l_tax <> 0.04 AND l_returnflag <> 'R' AND l_linestatus <> 'F' AND l_shipinstruct <> 'COLLECT COD' AND l_shipmode <> 'AIR';",
+                               False, False, False, True, False),
+                     TestQuery("NEP9",
+                               "SELECT * FROM lineitem WHERE l_quantity <> 25 AND l_extendedprice <> 5000.00 AND l_discount <> 0.05 AND l_tax <> 0.04 AND l_returnflag <> 'R' AND l_linestatus <> 'F' AND l_shipinstruct <> 'COLLECT COD' AND l_shipmode <> 'AIR' AND l_shipdate <> '1995-06-15';",
+                               False, False, False, True, False),
+                     TestQuery("NEP10",
+                               "SELECT * FROM lineitem WHERE l_quantity <> 25 AND l_extendedprice <> 5000.00 AND l_discount <> 0.05 AND l_tax <> 0.04 AND l_returnflag <> 'R' AND l_linestatus <> 'F' AND l_shipinstruct <> 'COLLECT COD' AND l_shipmode <> 'AIR' AND l_shipdate <> '1995-06-15' AND l_commitdate <> '1995-07-01';",
+                               False, False, False, True, False),
                      ]
     return test_workload
 
+OJ_SPEC = [("region", "r_name", None),
+           ("nation", "n_name", "r_regionkey = n_regionkey"),
+           ("supplier", "s_name", "n_nationkey = s_nationkey"),
+           ("partsupp", "ps_availqty", "s_suppkey = ps_suppkey"),
+           ("part", "p_name", "ps_partkey = p_partkey"),
+           ("lineitem", "l_quantity", "p_partkey = l_partkey"),
+           ("orders", "o_totalprice", "l_orderkey = o_orderkey"),
+           ("customer", "c_name", "o_custkey = c_custkey")]
 
-# Press the green button in the gutter to run the script.
+def oj_chain(k):
+    sel = ", ".join(p for _, p, _ in OJ_SPEC[:k + 1])
+    joins = "".join(f" LEFT OUTER JOIN {t} ON {on}" for t, _, on in OJ_SPEC[1:k + 1])
+    return f"SELECT {sel} FROM region{joins};"
+
+# Disjunction scaling workload: DJ1..DJ10 (k = number of IN values). Add before `return test_workload`.
+# Disjunction scaling workload on a string attribute: DS1..DS10 (k = number of IN values).
+# Add before `return test_workload`.
+DISJ_STR_VALUES = ['SM CASE', 'SM BOX', 'SM PACK', 'SM PKG', 'MED BAG',
+                   'MED BOX', 'MED PKG', 'MED PACK', 'LG CASE', 'LG BOX']
+
+def disj_str_query(k):
+    vals = ", ".join(f"'{v}'" for v in DISJ_STR_VALUES[:k])
+    return f"SELECT p_partkey, p_name, p_comment FROM part WHERE p_container IN ({vals});"
+
+# Fixed |AUX| = 8, varying number of branches k = 2..8 (ids UK2..UK8). Add before `return test_workload`.
+# The 8 TPC-H tables form one foreign-key path, so any split into consecutive segments gives connected branches.
+FA_PATH = ["region", "nation", "supplier", "partsupp", "part", "lineitem", "orders", "customer"]
+FA_EDGES = ["r_regionkey = n_regionkey", "n_nationkey = s_nationkey", "s_suppkey = ps_suppkey",
+            "ps_partkey = p_partkey", "p_partkey = l_partkey", "l_orderkey = o_orderkey",
+            "o_custkey = c_custkey"]            # FA_EDGES[j] joins FA_PATH[j] and FA_PATH[j+1]
+FA_PROJ = {"region": "r_name, r_regionkey", "nation": "n_name, n_nationkey",
+           "supplier": "s_name, s_acctbal", "partsupp": "ps_comment, ps_supplycost",
+           "part": "p_name, p_retailprice", "lineitem": "l_comment, l_extendedprice",
+           "orders": "o_clerk, o_totalprice", "customer": "c_name, c_acctbal"}
+# number of tables per branch, for each k
+FA_SPLITS = {2: [4, 4], 3: [3, 3, 2], 4: [2, 2, 2, 2], 5: [2, 2, 2, 1, 1],
+             6: [2, 2, 1, 1, 1, 1], 7: [2, 1, 1, 1, 1, 1, 1], 8: [1] * 8}
+
+def fixed_aux_query(k):
+    branches, i = [], 0
+    for n in FA_SPLITS[k]:
+        tabs, joins = FA_PATH[i:i + n], FA_EDGES[i:i + n - 1]
+        i += n
+        q = f"SELECT {FA_PROJ[tabs[0]]} FROM {', '.join(tabs)}"   # projects from the first table of the branch
+        if joins:
+            q += " WHERE " + " AND ".join(joins)
+        branches.append(f"({q})")
+    return " UNION ALL ".join(branches) + ";"
+
+# Union scaling workload: UN3..UN8 (the number is |AUX|, the number of partial tables). 3 branches throughout.
+# Add before `return test_workload`.
+UNION_BRANCHES = [  # (tables in growth order, projection, join conditions in growth order)
+    (["supplier", "nation", "region"], "s_name, s_acctbal",
+     ["s_nationkey = n_nationkey", "n_regionkey = r_regionkey"]),
+    (["customer", "orders", "lineitem"], "c_name, c_acctbal",
+     ["c_custkey = o_custkey", "o_orderkey = l_orderkey"]),
+    (["part", "partsupp"], "p_name, p_retailprice",
+     ["p_partkey = ps_partkey"]),
+]
+# tables used per branch, for each |AUX|
+UNION_SIZES = {3: (1, 1, 1), 4: (2, 1, 1), 5: (2, 2, 1), 6: (2, 2, 2), 7: (3, 2, 2), 8: (3, 3, 2)}
+
+def union_query(m):
+    branches = []
+    for (tabs, proj, joins), n in zip(UNION_BRANCHES, UNION_SIZES[m]):
+        q = f"SELECT {proj} FROM {', '.join(tabs[:n])}"
+        if n > 1:
+            q += " WHERE " + " AND ".join(joins[:n - 1])
+        branches.append(f"({q})")
+    return " UNION ALL ".join(branches) + ";"
+
+
 if __name__ == '__main__':
     workload = create_workload()
+    workload += [TestQuery(f"OJ{k}", oj_chain(k), False, False, True, False) for k in range(1, 8)]
+    workload += [TestQuery(f"DS{k}", disj_str_query(k), False, False, False, False, True)
+                  for k in range(1, 11)]
+    workload += [TestQuery(f"UK{k}", fixed_aux_query(k), False, True, False, False) for k in FA_SPLITS]
+    workload += [TestQuery(f"UN{m}", union_query(m), False, True, False, False) for m in UNION_SIZES]
 
-    workload_dict = {}
-    for elem in workload:
-        workload_dict[elem.qid] = workload.index(elem)
+    workload_dict = {elem.qid: i for i, elem in enumerate(workload)}
 
-    # print(workload_dict)
+    signal.signal(signal.SIGTERM, signal_handler)
+    signal.signal(signal.SIGINT, signal_handler)
 
     qid = sys.argv[1]
+    if qid not in workload_dict:
+        print(f"Unknown query id: {qid}")
+        sys.exit(2)
     hq = workload[workload_dict[qid]]
     query = hq.query
+    print(query)
+
     conn = ConnectionHelperFactory().createConnectionHelper()
     conn.config.detect_union = hq.union
     conn.config.detect_oj = hq.oj
@@ -1209,24 +1479,26 @@ if __name__ == '__main__':
     conn.config.use_cs2 = hq.cs2
     conn.config.detect_or = hq.orf
 
-    print(f"Flags: Scale Down {conn.config.scale_down}, Union {conn.config.detect_union}, OJ {conn.config.detect_oj}, "
-          f"NEP {conn.config.detect_nep}, CS2 {conn.config.use_cs2}")
+    print(f"Flags: Scale Down {conn.config.scale_down}, Union {conn.config.detect_union}, "
+          f"OJ {conn.config.detect_oj}, NEP {conn.config.detect_nep}, CS2 {conn.config.use_cs2}")
 
-    signal.signal(signal.SIGTERM, signal_handler)
-    signal.signal(signal.SIGINT, signal_handler)
+    try:
+        factory = PipeLineFactory()
+        token = factory.init_job(conn, query)
+        factory.doJob(query, token)
+        result = factory.result
 
-    factory = PipeLineFactory()
-    token = factory.init_job(conn, query)
-    factory.doJob(query, token)
-    result = factory.result
-
-    if result is not None:
-        print("============= Given Query ===============")
-        print(query)
-        print("=========== Extracted Query =============")
-        print(result)
-        print("================ Profile ================")
-        pipe = factory.get_pipeline_obj(token)
-        pipe.time_profile.print()
-    else:
-        print("I had some Trouble! Check the log file for the details..")
+        if result is not None:
+            print("============= Given Query ===============")
+            print(query)
+            print("=========== Extracted Query =============")
+            print(result)
+            print("================ Profile ================")
+            pipe = factory.get_pipeline_obj(token)
+            pipe.time_profile.print()
+        else:
+            print(f"{qid}: I had some Trouble! Check the log file for the details..")
+            sys.exit(1)
+    except Exception:
+        traceback.print_exc()
+        sys.exit(1)
