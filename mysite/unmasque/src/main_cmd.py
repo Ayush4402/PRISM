@@ -33,7 +33,7 @@ def create_workload():
     test_workload = [TestQuery("U1", """(SELECT p_partkey, p_name FROM part, partsupp where p_partkey = ps_partkey and ps_availqty > 100
 Order By p_partkey Limit 5)
 UNION ALL (SELECT s_suppkey, s_name FROM supplier, partsupp where s_suppkey = ps_suppkey and
-ps_availqty > 200 Order By s_suppkey Limit 7);""", True, True, False, False),
+ps_availqty > 200 Order By s_suppkey Limit 7);""",False, True, False, False),
                      TestQuery("U2", """(SELECT s_suppkey, s_name FROM supplier, nation where s_nationkey = n_nationkey and  n_name = 'GERMANY' order by s_suppkey desc, s_name limit 12)UNION ALL (SELECT c_custkey, c_name FROM customer,  orders where c_custkey = o_custkey and o_orderpriority = '1-URGENT' order by c_custkey, c_name desc limit 10);
 """, False, True, False, False),
                      TestQuery("U3", """(SELECT c_custkey as key, c_name as name FROM customer, nation where c_nationkey = n_nationkey and  n_name = 'UNITED STATES' Order by key Limit 10)
@@ -68,45 +68,45 @@ nation where s_acctbal > 4000 and s_nationkey = n_nationkey);""", False, True, F
                      TestQuery("O1", """select c_name, n_name, count(*) as total from nation RIGHT OUTER
 JOIN customer ON c_nationkey = n_nationkey and c_acctbal < 1000
         GROUP BY c_name,
-n_name Order by c_name, n_name desc Limit 10;""", True, False, True, False),
+n_name Order by c_name, n_name desc Limit 10;""",False, False, True, False),
                      TestQuery("O2", """SELECT l_shipmode, o_shippriority ,count(*) as low_line_count FROM
 lineitem LEFT OUTER JOIN orders ON ( l_orderkey = o_orderkey AND
 o_totalprice > 50000 ) WHERE l_linenumber = 4 AND l_quantity < 30
-GROUP BY l_shipmode, o_shippriority Order By l_shipmode Limit 5;""", True, False, True, False),
+GROUP BY l_shipmode, o_shippriority Order By l_shipmode Limit 5;""",False, False, True, False),
                      TestQuery("O3", """SELECT o_custkey as key, sum(c_acctbal), o_clerk, c_name from orders FULL OUTER JOIN customer on c_custkey = o_custkey and
 o_orderstatus = 'F' group by o_custkey, o_clerk, c_name order by key
-limit 35;""", True, False, True, False),
+limit 35;""",False, False, True, False),
                      TestQuery("O4", """SELECT p_size, s_phone, ps_supplycost, n_name FROM part RIGHT
 OUTER JOIN partsupp ON p_partkey = ps_partkey AND p_size >
 7 LEFT OUTER JOIN supplier ON ps_suppkey = s_suppkey AND
 s_acctbal < 2000 FULL OUTER JOIN nation on s_nationkey =
-n_nationkey and n_regionkey > 3 Order by ps_supplycost asc Limit 50;""", True, False, True, False),
+n_nationkey and n_regionkey > 3 Order by ps_supplycost asc Limit 50;""",False, False, True, False),
                      TestQuery("O5", """Select ps_suppkey, p_name, p_type from part RIGHT outer join partsupp on p_partkey=ps_partkey and p_size > 4 and ps_availqty > 3350 Order By ps_suppkey Limit 100;
-""", True, False, True, False),
+""",False, False, True, False),
                      TestQuery("O6", """SELECT p_name, s_phone, ps_supplycost, n_name FROM part RIGHT OUTER JOIN partsupp ON p_partkey = ps_partkey AND p_size > 7
 	LEFT OUTER JOIN supplier ON ps_suppkey = s_suppkey AND s_acctbal < 2000 FULL OUTER JOIN nation on s_nationkey = n_nationkey
 	and n_regionkey > 3 Order By p_name, s_phone, ps_supplycost, n_name desc Limit 20;
-""", True, False, True, False),
+""",False, False, True, False),
                      TestQuery("A1", """Select l_shipmode, count(*) as count From orders, lineitem Where
 o_orderkey = l_orderkey and l_commitdate < l_receiptdate and
 l_shipdate < l_commitdate and l_receiptdate >= '1994-01-01' and
 l_receiptdate < '1995-01-01' and l_extendedprice <= o_totalprice
 and l_extendedprice <= 70000 and o_totalprice > 60000 Group By
-l_shipmode Order By l_shipmode;""", True, False, False, False),
+l_shipmode Order By l_shipmode;""",False, False, False, False),
                      TestQuery("A2", """Select o_orderpriority, count(*) as order_count From orders, lineitem
 Where l_orderkey = o_orderkey and o_orderdate >= '1993-07-01' and
 o_orderdate < '1993-10-01' and l_commitdate <= l_receiptdate Group
-By o_orderpriority Order By o_orderpriority;""", True, False, False, False),
+By o_orderpriority Order By o_orderpriority;""",False, False, False, False),
                      TestQuery("A3", """Select l_orderkey, l_linenumber From orders, lineitem, partsupp Where
 o_orderkey = l_orderkey and ps_partkey = l_partkey and ps_suppkey
 = l_suppkey and ps_availqty = l_linenumber and l_shipdate >=
 o_orderdate and o_orderdate >= '1990-01-01' and l_commitdate <=
 l_receiptdate and l_shipdate <= l_commitdate and l_receiptdate > '1994-01-01' Order By l_orderkey Limit 7;
-""", True, False, False, False),
+""",False, False, False, False),
                      TestQuery("A4", """Select s_name, count(*) as numwait From supplier, lineitem, orders,
 nation Where s_suppkey = l_suppkey and o_orderkey = l_orderkey and
 o_orderstatus = 'F' and l_receiptdate >= l_commitdate and s_nationkey
-= n_nationkey Group By s_name Order By numwait desc Limit 100;""", True, False, False, False),
+= n_nationkey Group By s_name Order By numwait desc Limit 100;""",False, False, False, False),
                      TestQuery("A5", """Select l_returnflag, l_linestatus, sum(l_quantity) as sum_qty,
 sum(l_extendedprice) as sum_base_price, sum(l_extendedprice
 * (1 - l_discount)) as sum_disc_price, sum(l_extendedprice * (1 -
@@ -114,7 +114,7 @@ l_discount) * (1 + l_tax)) as sum_charge, avg(l_quantity) as avg_qty,
 avg(l_extendedprice) as avg_price, avg(l_discount) as avg_disc, count(*)
 as count_order From lineitem Where l_shipdate <= l_receiptdate and
 l_receiptdate <= l_commitdate Group By l_returnflag, l_linestatus
-Order by l_returnflag, l_linestatus;""", True, False, False, False),
+Order by l_returnflag, l_linestatus;""",False, False, False, False),
                      TestQuery("N1", """Select p_brand, p_type, p_size, Count(*) as supplier_cnt
  From part, partsupp
  Where p_partkey = ps_partkey
@@ -165,7 +165,7 @@ from customer LEFT OUTER JOIN orders on c_custkey = o_custkey
 FROM lineitem 
 WHERE l_shipdate <= DATE '1998-12-01' - INTERVAL '71 days' 
 GROUP BY l_returnflag, l_linestatus 
-ORDER BY l_returnflag, l_linestatus;""", True, False, False, False),
+ORDER BY l_returnflag, l_linestatus;""",False, False, False, False),
                      TestQuery("MQ2", """SELECT s_acctbal, s_name, n_name, p_partkey, p_mfgr, s_address, s_phone, s_comment
 FROM part, supplier, partsupp, nation, region
 WHERE p_partkey = ps_partkey 
@@ -176,7 +176,7 @@ WHERE p_partkey = ps_partkey
   AND n_regionkey = r_regionkey 
   AND r_name = 'MIDDLE EAST'
 ORDER BY s_acctbal DESC, n_name, s_name, p_partkey
-LIMIT 100;""", True, False, False, False),
+LIMIT 100;""",False, False, False, False),
                      TestQuery("MQ3", """SELECT l_orderkey, 
        SUM(l_extendedprice * (1 - l_discount)) AS revenue, 
        o_orderdate, o_shippriority
@@ -195,7 +195,7 @@ WHERE o_orderdate >= DATE '1997-07-01'
   AND o_orderdate < DATE '1997-07-01' + INTERVAL '3 months'
 GROUP BY o_orderdate, o_orderpriority
 ORDER BY o_orderpriority
-LIMIT 10;""", True, False, False, False),
+LIMIT 10;""",False, False, False, False),
                      TestQuery("MQ5", """SELECT n_name, 
        SUM(l_extendedprice * (1 - l_discount)) AS revenue
 FROM customer, orders, lineitem, supplier, nation, region
@@ -210,7 +210,7 @@ WHERE c_custkey = o_custkey
   AND o_orderdate < DATE '1994-01-01' + INTERVAL '1 year'
 GROUP BY n_name
 ORDER BY revenue DESC
-LIMIT 100;""", True, False, False, False),
+LIMIT 100;""",False, False, False, False),
                      TestQuery("MQ6", """SELECT l_shipmode, 
        SUM(l_extendedprice * l_discount) AS revenue
 FROM lineitem
@@ -218,7 +218,7 @@ WHERE l_shipdate >= DATE '1994-01-01'
   AND l_shipdate < DATE '1994-01-01' + INTERVAL '1 year' 
   AND l_quantity < 24
 GROUP BY l_shipmode
-LIMIT 100;""", True, False, False, False),
+LIMIT 100;""",False, False, False, False),
                      TestQuery("MQ10", """SELECT c_name, 
        SUM(l_extendedprice * (1 - l_discount)) AS revenue, 
        c_acctbal, n_name, c_address, c_phone, c_comment
@@ -231,7 +231,7 @@ WHERE c_custkey = o_custkey
   AND c_nationkey = n_nationkey
 GROUP BY c_name, c_acctbal, c_phone, n_name, c_address, c_comment
 ORDER BY revenue DESC
-LIMIT 20;""", True, False, False, False),
+LIMIT 20;""",False, False, False, False),
                      TestQuery("MQ11", """SELECT ps_comment, 
        SUM(ps_supplycost * ps_availqty) AS value
 FROM partsupp, supplier, nation
@@ -240,12 +240,12 @@ WHERE ps_suppkey = s_suppkey
   AND n_name = 'ARGENTINA'
 GROUP BY ps_comment
 ORDER BY value DESC
-LIMIT 100;""", True, False, False, False),
+LIMIT 100;""",False, False, False, False),
                      TestQuery("MQ17", """SELECT AVG(l_extendedprice) AS avg_total
 FROM lineitem, part
 WHERE p_partkey = l_partkey 
   AND p_brand = 'Brand#52' 
-  AND p_container = 'LG CAN';""", True, False, False, False),
+  AND p_container = 'LG CAN';""",False, False, False, False),
                      TestQuery("MQ18", """SELECT c_name, o_orderdate, o_totalprice, SUM(l_quantity)
 FROM customer, orders, lineitem
 WHERE c_phone LIKE '27-%' 
@@ -253,7 +253,7 @@ WHERE c_phone LIKE '27-%'
   AND o_orderkey = l_orderkey
 GROUP BY c_name, o_orderdate, o_totalprice
 ORDER BY o_orderdate, o_totalprice DESC
-LIMIT 100;""", True, False, False, False),
+LIMIT 100;""",False, False, False, False),
                      TestQuery("MQ21", """SELECT s_name, COUNT(*) AS numwait
 FROM supplier, lineitem l1, orders, nation
 WHERE s_suppkey = l1.l_suppkey 
@@ -263,7 +263,7 @@ WHERE s_suppkey = l1.l_suppkey
   AND n_name = 'GERMANY'
 GROUP BY s_name
 ORDER BY numwait DESC, s_name
-LIMIT 100;""", True, False, False, False),
+LIMIT 100;""",False, False, False, False),
                      TestQuery("Alaap", """select c_mktsegment, 
                          sum(l_extendedprice*(1-l_discount) + l_quantity) as revenue,
                          o_orderdate, o_shippriority 
