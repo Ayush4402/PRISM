@@ -1,5 +1,6 @@
 import signal
 import sys
+import traceback
 
 from .core.factory.PipeLineFactory import PipeLineFactory
 from .pipeline.abstract.TpchSanitizer import TpchSanitizer
@@ -1184,165 +1185,9 @@ and ps2.ps1_availqty >= ps1.ps_availqty
 and o1.o_orderdate between date '1995-01-01' and date '1995-12-31'
 and o2.o1_orderdate between date '1995-01-01' and date '1995-12-31'
 group by c_address;""", False, True, False, False),
-
-                     TestQuery("Anantha-Q2", """SELECT *
-FROM variable_assignments
-WHERE 
-   (var1_val = 0 AND var2_val = 0 AND var3_val = 0 AND var4_val = 1 AND   var5_val = 1 AND var6_val = 0 AND var7_val = 0 AND var8_val = 0 AND var9_val = 0 AND var10_val = 0)
-OR (var1_val = 0 AND var2_val = 1 AND var3_val = 0 AND var4_val = 0 AND var5_val = 1 AND var6_val = 1 AND var7_val = 0 AND var8_val = 1 AND var9_val = 0 AND var10_val = 1)
-OR (var1_val = 1 AND var2_val = 0 AND var3_val = 1 AND var4_val = 1 AND var5_val = 0 AND var6_val = 0 AND var7_val = 1 AND var8_val = 0 AND var9_val = 1 AND var10_val = 0)
-OR (var1_val = 1 AND var2_val = 1 AND var3_val = 1 AND var4_val = 0 AND var5_val = 0 AND var6_val = 1 AND var7_val = 1 AND var8_val = 1 AND var9_val = 1 AND var10_val = 1)
-;""", False, False, False, False, True),
-
-                     TestQuery("Anantha-Q1", """SELECT *
-    FROM variable_assignments
-    WHERE 
-       WHERE
-  (
-    (var1_val = 0 AND var2_val = 0 AND var3_val = 0 AND var4_val = 1)
-    OR (var1_val = 0 AND var2_val = 0 AND var3_val = 1 AND var4_val = 0)
-    OR (var1_val = 0 AND var2_val = 1 AND var3_val = 0 AND var4_val = 0)
-    OR (var1_val = 0 AND var2_val = 1 AND var3_val = 1 AND var4_val = 1)
-    OR (var1_val = 1 AND var2_val = 0 AND var3_val = 0 AND var4_val = 0)
-    OR (var1_val = 1 AND var2_val = 0 AND var3_val = 1 AND var4_val = 1)
-    OR (var1_val = 1 AND var2_val = 1 AND var3_val = 0 AND var4_val = 1)
-    OR (var1_val = 1 AND var2_val = 1 AND var3_val = 1 AND var4_val = 0)
-  )
-
-  AND (
-    (var2_val = 0 AND var3_val = 0 AND var4_val = 0 AND var5_val = 0)
-    OR (var2_val = 0 AND var3_val = 0 AND var4_val = 1 AND var5_val = 1)
-    OR (var2_val = 0 AND var3_val = 1 AND var4_val = 0 AND var5_val = 1)
-    OR (var2_val = 0 AND var3_val = 1 AND var4_val = 1 AND var5_val = 0)
-    OR (var2_val = 1 AND var3_val = 0 AND var4_val = 0 AND var5_val = 1)
-    OR (var2_val = 1 AND var3_val = 0 AND var4_val = 1 AND var5_val = 0)
-    OR (var2_val = 1 AND var3_val = 1 AND var4_val = 0 AND var5_val = 0)
-    OR (var2_val = 1 AND var3_val = 1 AND var4_val = 1 AND var5_val = 1)
-  )
-
-  AND (
-    (var3_val = 0 AND var4_val = 0 AND var5_val = 0 AND var6_val = 0)
-    OR (var3_val = 0 AND var4_val = 0 AND var5_val = 1 AND var6_val = 1)
-    OR (var3_val = 0 AND var4_val = 1 AND var5_val = 0 AND var6_val = 1)
-    OR (var3_val = 0 AND var4_val = 1 AND var5_val = 1 AND var6_val = 0)
-    OR (var3_val = 1 AND var4_val = 0 AND var5_val = 0 AND var6_val = 1)
-    OR (var3_val = 1 AND var4_val = 0 AND var5_val = 1 AND var6_val = 0)
-    OR (var3_val = 1 AND var4_val = 1 AND var5_val = 0 AND var6_val = 0)
-    OR (var3_val = 1 AND var4_val = 1 AND var5_val = 1 AND var6_val = 1)
-  )
-
-  AND (
-    (var4_val = 0 AND var5_val = 0 AND var6_val = 0 AND var7_val = 0)
-    OR (var4_val = 0 AND var5_val = 0 AND var6_val = 1 AND var7_val = 1)
-    OR (var4_val = 0 AND var5_val = 1 AND var6_val = 0 AND var7_val = 1)
-    OR (var4_val = 0 AND var5_val = 1 AND var6_val = 1 AND var7_val = 0)
-    OR (var4_val = 1 AND var5_val = 0 AND var6_val = 0 AND var7_val = 1)
-    OR (var4_val = 1 AND var5_val = 0 AND var6_val = 1 AND var7_val = 0)
-    OR (var4_val = 1 AND var5_val = 1 AND var6_val = 0 AND var7_val = 0)
-    OR (var4_val = 1 AND var5_val = 1 AND var6_val = 1 AND var7_val = 1)
-  )
-
-  AND (
-    (var5_val = 0 AND var6_val = 0 AND var7_val = 0 AND var8_val = 1)
-    OR (var5_val = 0 AND var6_val = 0 AND var7_val = 1 AND var8_val = 0)
-    OR (var5_val = 0 AND var6_val = 1 AND var7_val = 0 AND var8_val = 0)
-    OR (var5_val = 0 AND var6_val = 1 AND var7_val = 1 AND var8_val = 1)
-    OR (var5_val = 1 AND var6_val = 0 AND var7_val = 0 AND var8_val = 0)
-    OR (var5_val = 1 AND var6_val = 0 AND var7_val = 1 AND var8_val = 1)
-    OR (var5_val = 1 AND var6_val = 1 AND var7_val = 0 AND var8_val = 1)
-    OR (var5_val = 1 AND var6_val = 1 AND var7_val = 1 AND var8_val = 0)
-  )
-
-  AND (
-    (var6_val = 0 AND var7_val = 0 AND var8_val = 0 AND var9_val = 0)
-    OR (var6_val = 0 AND var7_val = 0 AND var8_val = 1 AND var9_val = 1)
-    OR (var6_val = 0 AND var7_val = 1 AND var8_val = 0 AND var9_val = 1)
-    OR (var6_val = 0 AND var7_val = 1 AND var8_val = 1 AND var9_val = 0)
-    OR (var6_val = 1 AND var7_val = 0 AND var8_val = 0 AND var9_val = 1)
-    OR (var6_val = 1 AND var7_val = 0 AND var8_val = 1 AND var9_val = 0)
-    OR (var6_val = 1 AND var7_val = 1 AND var8_val = 0 AND var9_val = 0)
-    OR (var6_val = 1 AND var7_val = 1 AND var8_val = 1 AND var9_val = 1)
-  )
-
-  AND (
-    (var7_val = 0 AND var8_val = 0 AND var9_val = 0 AND var10_val = 0)
-    OR (var7_val = 0 AND var8_val = 0 AND var9_val = 1 AND var10_val = 1)
-    OR (var7_val = 0 AND var8_val = 1 AND var9_val = 0 AND var10_val = 1)
-    OR (var7_val = 0 AND var8_val = 1 AND var9_val = 1 AND var10_val = 0)
-    OR (var7_val = 1 AND var8_val = 0 AND var9_val = 0 AND var10_val = 1)
-    OR (var7_val = 1 AND var8_val = 0 AND var9_val = 1 AND var10_val = 0)
-    OR (var7_val = 1 AND var8_val = 1 AND var9_val = 0 AND var10_val = 0)
-    OR (var7_val = 1 AND var8_val = 1 AND var9_val = 1 AND var10_val = 1)
-  )
-
-  AND (
-    (var8_val = 0 AND var9_val = 0 AND var10_val = 0 AND var1_val = 0)
-    OR (var8_val = 0 AND var9_val = 0 AND var10_val = 1 AND var1_val = 1)
-    OR (var8_val = 0 AND var9_val = 1 AND var10_val = 0 AND var1_val = 1)
-    OR (var8_val = 0 AND var9_val = 1 AND var10_val = 1 AND var1_val = 0)
-    OR (var8_val = 1 AND var9_val = 0 AND var10_val = 0 AND var1_val = 1)
-    OR (var8_val = 1 AND var9_val = 0 AND var10_val = 1 AND var1_val = 0)
-    OR (var8_val = 1 AND var9_val = 1 AND var10_val = 0 AND var1_val = 0)
-    OR (var8_val = 1 AND var9_val = 1 AND var10_val = 1 AND var1_val = 1)
-  )
-
-
-  AND (
-    (var9_val = 0 AND var10_val = 0 AND var1_val = 0 AND var2_val = 0)
-    OR (var9_val = 0 AND var10_val = 0 AND var1_val = 1 AND var2_val = 1)
-    OR (var9_val = 0 AND var10_val = 1 AND var1_val = 0 AND var2_val = 1)
-    OR (var9_val = 0 AND var10_val = 1 AND var1_val = 1 AND var2_val = 0)
-    OR (var9_val = 1 AND var10_val = 0 AND var1_val = 0 AND var2_val = 1)
-    OR (var9_val = 1 AND var10_val = 0 AND var1_val = 1 AND var2_val = 0)
-    OR (var9_val = 1 AND var10_val = 1 AND var1_val = 0 AND var2_val = 0)
-    OR (var9_val = 1 AND var10_val = 1 AND var1_val = 1 AND var2_val = 1)
-  )
-
-
-  AND (
-    (var10_val = 0 AND var1_val = 0 AND var2_val = 0 AND var3_val = 0)
-    OR (var10_val = 0 AND var1_val = 0 AND var2_val = 1 AND var3_val = 1)
-    OR (var10_val = 0 AND var1_val = 1 AND var2_val = 0 AND var3_val = 1)
-    OR (var10_val = 0 AND var1_val = 1 AND var2_val = 1 AND var3_val = 0)
-    OR (var10_val = 1 AND var1_val = 0 AND var2_val = 0 AND var3_val = 1)
-    OR (var10_val = 1 AND var1_val = 0 AND var2_val = 1 AND var3_val = 0)
-    OR (var10_val = 1 AND var1_val = 1 AND var2_val = 0 AND var3_val = 0)
-    OR (var10_val = 1 AND var1_val = 1 AND var2_val = 1 AND var3_val = 1)
-  );""",
-                               False, False, False, False, True),
-                     TestQuery("Customer", """SELECT * 
-FROM customer_buying_record
-WHERE 
-      (x1 = 1 OR y1 = 1)
-  AND (x2 = 1 OR y2 = 1)
-  AND (x3 = 1 OR y3 = 1)
-  AND (x4 = 1 OR y4 = 1)
-  AND (x5 = 1 OR y5 = 1)
-  AND (x6 = 1 OR y6 = 1)
-  AND (x7 = 1 OR y7 = 1)
-  AND (x8 = 1 OR y8 = 1)
-  AND (x9 = 1 OR y9 = 1)
-  AND (x10 = 1 OR y10 = 1)
-  AND (x11 = 1 OR y11 = 1)
-  AND (x12 = 1 OR y12 = 1)
-  AND (x13 = 1 OR y13 = 1)
-  AND (x14 = 1 OR y14 = 1)
-  AND (x15 = 1 OR y15 = 1)
-  AND (x16 = 1 OR y16 = 1)
-  AND (x17 = 1 OR y17 = 1)
-  AND (x18 = 1 OR y18 = 1)
-  AND (x19 = 1 OR y19 = 1)
-  AND (x20 = 1 OR y20 = 1)
-  AND (x21 = 1 OR y21 = 1)
-  AND (x22 = 1 OR y22 = 1)
-  AND (x23 = 1 OR y23 = 1)
-  AND (x24 = 1 OR y24 = 1)
-  AND (x25 = 1 OR y25 = 1)
-  AND (x26 = 1 OR y26 = 1)
-  AND (x27 = 1 OR y27 = 1)
-  AND (x28 = 1 OR y28 = 1)
-  AND (x29 = 1 OR y29 = 1)
-  AND (x30 = 1 OR y30 = 1);""", False, False, False, False, True),
+                     TestQuery("oj_bug", """SELECT c_custkey, c_name, c_mktsegment, o_orderkey
+FROM customer FULL OUTER JOIN orders ON c_custkey = o_custkey
+WHERE c_mktsegment = 'BUILDING';""", False, False, True, False),
                      TestQuery("QN1", "SELECT c_name, c_acctbal FROM customer "
             "WHERE c_mktsegment <> 'BUILDING' AND c_acctbal > 9000;", False, False, False, True, False),
         TestQuery("QN2", "SELECT o_orderkey, o_totalprice FROM orders WHERE o_orderstatus <> 'F' AND o_orderpriority <> '1-URGENT';", False, False, False, True, False)
@@ -1451,6 +1296,44 @@ def union_query(m):
     return " UNION ALL ".join(branches) + ";"
 
 
+# TPC-DS union scaling workload. Add before `return test_workload`.
+#   T3B3..T3B12 : 3 branches, |AUX| grows from 3 to 12
+#   T6B6..T6B12 : 6 branches, |AUX| grows from 6 to 12
+# Branches are disjoint stars (a fact table plus dimensions joined on single surrogate-key equalities); no common tables.
+TPCDS_3B = [  # (tables in growth order, projection, join conditions in growth order)
+    (["store_sales", "store", "household_demographics", "promotion"], "ss_ticket_number, ss_net_paid",
+     ["ss_store_sk = s_store_sk", "ss_hdemo_sk = hd_demo_sk", "ss_promo_sk = p_promo_sk"]),
+    (["catalog_sales", "catalog_page", "call_center", "ship_mode"], "cs_order_number, cs_net_paid",
+     ["cs_catalog_page_sk = cp_catalog_page_sk", "cs_call_center_sk = cc_call_center_sk",
+      "cs_ship_mode_sk = sm_ship_mode_sk"]),
+    (["web_sales", "web_site", "web_page", "customer_address"], "ws_order_number, ws_net_paid",
+     ["ws_web_site_sk = web_site_sk", "ws_web_page_sk = wp_web_page_sk", "ws_bill_addr_sk = ca_address_sk"]),
+]
+TPCDS_3B_SIZES = {3: (1, 1, 1), 4: (2, 1, 1), 5: (2, 2, 1), 6: (2, 2, 2), 7: (3, 2, 2),
+                  8: (3, 3, 2), 9: (3, 3, 3), 10: (4, 3, 3), 11: (4, 4, 3), 12: (4, 4, 4)}
+
+TPCDS_6B = [
+    (["store_sales", "store"], "ss_ticket_number, ss_net_paid", ["ss_store_sk = s_store_sk"]),
+    (["catalog_sales", "catalog_page"], "cs_order_number, cs_net_paid", ["cs_catalog_page_sk = cp_catalog_page_sk"]),
+    (["web_sales", "web_site"], "ws_order_number, ws_net_paid", ["ws_web_site_sk = web_site_sk"]),
+    (["store_returns", "reason"], "sr_ticket_number, sr_return_amt", ["sr_reason_sk = r_reason_sk"]),
+    (["catalog_returns", "call_center"], "cr_order_number, cr_return_amount", ["cr_call_center_sk = cc_call_center_sk"]),
+    (["web_returns", "web_page"], "wr_order_number, wr_return_amt", ["wr_web_page_sk = wp_web_page_sk"]),
+]
+TPCDS_6B_SIZES = {6: (1, 1, 1, 1, 1, 1), 7: (2, 1, 1, 1, 1, 1), 8: (2, 2, 1, 1, 1, 1),
+                  9: (2, 2, 2, 1, 1, 1), 10: (2, 2, 2, 2, 1, 1), 11: (2, 2, 2, 2, 2, 1), 12: (2, 2, 2, 2, 2, 2)}
+
+def tpcds_union_query(branches, sizes):
+    parts = []
+    for (tabs, proj, joins), n in zip(branches, sizes):
+        q = f"SELECT {proj} FROM {', '.join(tabs[:n])}"
+        if n > 1:
+            q += " WHERE " + " AND ".join(joins[:n - 1])
+        parts.append(f"({q})")
+    return " UNION ALL ".join(parts) + ";"
+
+
+
 if __name__ == '__main__':
     workload = create_workload()
     workload += [TestQuery(f"OJ{k}", oj_chain(k), False, False, True, False) for k in range(1, 8)]
@@ -1458,6 +1341,11 @@ if __name__ == '__main__':
                   for k in range(1, 11)]
     workload += [TestQuery(f"UK{k}", fixed_aux_query(k), False, True, False, False) for k in FA_SPLITS]
     workload += [TestQuery(f"UN{m}", union_query(m), False, True, False, False) for m in UNION_SIZES]
+    # flags: cs2, union, oj, nep, orf
+    workload += [TestQuery(f"T3B{m}", tpcds_union_query(TPCDS_3B, s), False, True, False, False)
+                 for m, s in TPCDS_3B_SIZES.items()]
+    workload += [TestQuery(f"T6B{m}", tpcds_union_query(TPCDS_6B, s), False, True, False, False)
+                 for m, s in TPCDS_6B_SIZES.items()]
 
     workload_dict = {elem.qid: i for i, elem in enumerate(workload)}
 
