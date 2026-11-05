@@ -1,0 +1,7 @@
+query,time_s[SF 1],time_s[SF 10],anchor_source
+UN3,56.0,481.8,measured
+UN4,68.3,593.2,estimated
+UN5,92.8,817.6,estimated
+UN6,106.8,948.5,estimated
+UN7,124.1,1114.1,estimated
+UN8,170.0,1547.5,measured
