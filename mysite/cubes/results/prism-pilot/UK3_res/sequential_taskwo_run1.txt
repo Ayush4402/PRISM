@@ -1,0 +1,6 @@
+Query: UK3
+Command: time python sequential.py tests-examples/prism-pilots/UK3/taskwo.yaml
+Result: Manually terminated with Ctrl+C; no solution returned
+real: 5m58.886s
+user: 5m53.472s
+sys: 0m6.952s

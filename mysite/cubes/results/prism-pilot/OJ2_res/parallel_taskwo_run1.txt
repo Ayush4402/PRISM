@@ -1,0 +1,6 @@
+Query: OJ2
+Command: time python cubes.py tests-examples/prism-pilots/OJ2/taskwo.yaml
+Result: Manually terminated with Ctrl+C; no solution returned
+real: 11m43.622s
+user: 116m34.849s
+sys: 0m4.227s

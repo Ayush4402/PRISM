@@ -1,0 +1,6 @@
+Query: UK3
+Command: time python cubes.py tests-examples/prism-pilots/UK3/taskwo.yaml
+Result: Manually terminated with Ctrl+C; no solution returned
+real: 6m48.925s
+user: 67m21.975s
+sys: 0m32.503s

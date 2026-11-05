@@ -1,0 +1,6 @@
+Query: OJ1
+Command: time python sequential.py tests-examples/prism-pilots/OJ1/taskw.yaml
+Result: Manually terminated with Ctrl+C; no solution returned
+real: 11m18.597s
+user: 11m19.169s
+sys: 0m1.207s
