@@ -1,0 +1,9 @@
+inputs:
+  - tests-examples/prism-pilots/NEP2/tables/lineitem.csv
+output: tests-examples/prism-pilots/NEP2/expected.csv
+loc: 1
+sql: |
+  SELECT * FROM lineitem WHERE l_quantity <> 25 AND l_extendedprice <> 5000.00;
+comment: |
+  df1 <- df_lineitem %>% filter(l_quantity != 25 & l_extendedprice != 5000.00)
+  out <- df1 %>% arrange(l_orderkey)

@@ -1,0 +1,37 @@
+db: tests-examples/textbook/tables/22.sqlite3
+inputs:
+  - tests-examples/textbook/tables/22-1.txt
+  - tests-examples/textbook/tables/22-2.txt
+  - tests-examples/textbook/tables/22-3.txt
+output: tests-examples/textbook/tables/22.out
+const:
+  - green
+aggrs:
+  - n
+attrs:
+  - color
+bools:
+  - '!='
+loc: 5
+solution:
+  - natural_join
+  - summarise
+  - natural_join3
+  - filter
+  - anti_join
+sql: |
+  SELECT S.S_name, COUNT(*) as PartCount
+  FROM "22-3" AS S JOIN "22-2" AS P JOIN "22-1" AS C
+  WHERE P.P_id = C.P_id
+    AND C.S_key = S.S_key
+  GROUP BY S.S_name, S.S_key
+  HAVING EVERY(P.color = 'green')
+comment: |
+  5.2.10 optimal solution
+
+  df4 <- inner_join(input2, input1)
+  df5 <- df4 %>% group_by(S_key) %>% summarise(n = n()) %>% ungroup()
+  df6 <- inner_join(input3, df5) %>% inner_join(input1)
+  df7 <- df4 %>% filter(color != 'green')
+  df8 <- anti_join(df6, df7, by=c('S_key'))
+  out <- df8 %>% select(S_name, n) %>% arrange(S_name)

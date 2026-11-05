@@ -1,0 +1,35 @@
+db: tests-examples/textbook/tables/21.sqlite3
+inputs:
+  - tests-examples/textbook/tables/21-1.txt
+  - tests-examples/textbook/tables/21-2.txt
+  - tests-examples/textbook/tables/21-3.txt
+output: tests-examples/textbook/tables/21.out
+constants:
+  - red
+  - green
+columns:
+  - color
+bools:
+  - ==
+loc: 2
+solution:
+  - natural_join3
+  - filter
+sql: |
+  SELECT DISTINCT S.S_name
+  FROM "21-1" AS C JOIN "21-2" AS P JOIN "21-3" AS S
+  WHERE C.P_id = P.P_id
+    AND C.S_key = S.S_key
+    AND P.color = 'red'
+  UNION
+  SELECT DISTINCT S1.S_name
+  FROM "21-1" AS C1 JOIN "21-2" AS P1 JOIN "21-3" AS S1
+  WHERE C1.P_id = P1.P_id
+    AND C1.S_key = S1.S_key
+    AND P1.color = 'green'
+comment: |
+  5.2.9 optimal solution
+
+  df1 <- inner_join(df_21_1, df_21_3) %>% inner_join(df_21_2)
+  df2 <- df1 %>% filter(color == 'red' | color == 'green')
+  out <- df2 %>% select(S_name) %>% distinct() %>% arrange(S_name)

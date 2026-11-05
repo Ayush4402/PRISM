@@ -1,0 +1,14 @@
+inputs:
+  - tests-examples/prism-pilots/UN3/tables/supplier.csv
+  - tests-examples/prism-pilots/UN3/tables/customer.csv
+  - tests-examples/prism-pilots/UN3/tables/part.csv
+output: tests-examples/prism-pilots/UN3/expected.csv
+loc: 2
+sql: |
+  (SELECT s_name, s_acctbal FROM supplier)
+  UNION ALL
+  (SELECT c_name, c_acctbal FROM customer)
+  UNION ALL
+  (SELECT p_name, p_retailprice FROM part);
+comment: |
+  UN3 has no WHERE predicate or constants, so no columns or constants hints apply.

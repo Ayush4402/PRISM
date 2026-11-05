@@ -1,0 +1,16 @@
+r_name,r_regionkey
+Region North,10
+Region South,11
+Region East,12
+Region West,13
+Region Central,14
+Supply North,41
+Supply South,42
+Supply East,43
+Supply West,44
+Supply Central,45
+Clerk North,81
+Clerk South,82
+Clerk East,83
+Clerk West,84
+Clerk Central,85

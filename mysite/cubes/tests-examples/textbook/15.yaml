@@ -1,0 +1,40 @@
+db: tests-examples/textbook/tables/15.sqlite3
+inputs:
+  - tests-examples/textbook/tables/15-1.txt
+  - tests-examples/textbook/tables/15-2.txt
+  - tests-examples/textbook/tables/15-3.txt
+output: tests-examples/textbook/tables/15.out
+constants:
+  - red
+functions:
+  - n
+filters:
+  - max(n)
+columns:
+  - color
+bools:
+  - ==
+loc: 3
+solution:
+  - natural_join3
+  - summarise
+  - filter
+sql: |
+  SELECT S.S_name
+  FROM "15-3" AS S
+  WHERE NOT EXISTS(SELECT P.P_id
+                   FROM "15-2" AS P
+                   WHERE P.color = 'red'
+                   EXCEPT
+                   SELECT C.P_id
+                   FROM "15-1" AS C JOIN "15-2" AS P
+                   WHERE C.S_key = S.S_key
+                     AND C.P_id = P.P_id
+                     AND P.color = 'red')
+comment: |
+  5.2.3 optimal solution
+
+  df1 <- inner_join(inner_join(input3, input1), input2)
+  df2 <- df1 %>% group_by(color, S_name) %>% summarise(n = n()) %>% ungroup()
+  df3 <- df2 %>% filter(n == max(n) & color == 'red')
+  out <- df3 %>% select(S_name) %>% distinct()

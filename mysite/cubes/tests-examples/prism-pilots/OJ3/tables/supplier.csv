@@ -1,0 +1,6 @@
+s_suppkey,s_name,s_nationkey
+201,Supplier A,101
+202,Supplier B,101
+203,Supplier C,103
+204,Supplier D,104
+205,Supplier E,105

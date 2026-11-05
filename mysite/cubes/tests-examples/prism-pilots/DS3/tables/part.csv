@@ -1,0 +1,6 @@
+p_partkey,p_name,p_container,p_comment
+1001,Bolt Kit,SM CASE,Standard bolt kit
+1002,Gear Set,SM BOX,Replacement gear set
+1003,Valve Pack,MED BAG,Industrial valve pack
+1004,Clamp Set,SM CASE,Adjustable clamp set
+1005,Nut Pack,SM PACK,Assorted nut pack

@@ -1,0 +1,37 @@
+db: tests-examples/textbook/tables/4.sqlite3
+inputs:
+  - tests-examples/textbook/tables/4-1.txt
+  - tests-examples/textbook/tables/4-2.txt
+  - tests-examples/textbook/tables/4-3.txt
+output: tests-examples/textbook/tables/4.out
+const:
+  - 2
+aggrs:
+  - n
+bools:
+  - ==
+loc: 3
+solution:
+  - natural_join3
+  - summarise
+  - filter
+sql: |
+  SELECT DISTINCT S.S_name
+  FROM "4-3" AS S
+  WHERE S.S_key IN (SELECT E1.S_key
+                    FROM "4-2" AS E1 JOIN
+                         "4-2" AS E2 JOIN
+                         "4-1" AS C1 JOIN
+                         "4-1" AS C2
+                    WHERE E1.S_key = E2.S_key
+                      AND E1.C_name != E2.C_name
+                      AND E1.C_name = C1.C_name
+                      AND E2.C_name = C2.C_name
+                      AND C1.meets_at = C2.meets_at)
+comment: |
+  5.1.4 optimal solution
+
+  df1 <- inner_join(inner_join(input1, input2), input3)
+  df2 <- df1 %>% group_by(meets_at, S_name) %>% summarise(n = n()) %>% ungroup()
+  df3 <- df2 %>% filter(n == 2)
+  out <- df3 %>% select(S_name)

@@ -1,0 +1,9 @@
+inputs:
+  - tests-examples/prism-pilots/NEP1/tables/lineitem.csv
+output: tests-examples/prism-pilots/NEP1/expected.csv
+loc: 1
+sql: |
+  SELECT * FROM lineitem WHERE l_quantity <> 25;
+comment: |
+  df1 <- df_lineitem %>% filter(l_quantity != 25)
+  out <- df1 %>% arrange(l_orderkey)

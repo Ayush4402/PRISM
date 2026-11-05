@@ -1,0 +1,18 @@
+inputs:
+  - tests-examples/prism-pilots/OJ3/tables/region.csv
+  - tests-examples/prism-pilots/OJ3/tables/nation.csv
+  - tests-examples/prism-pilots/OJ3/tables/supplier.csv
+  - tests-examples/prism-pilots/OJ3/tables/partsupp.csv
+output: tests-examples/prism-pilots/OJ3/expected.csv
+loc: 3
+sql: |
+  SELECT r_name, n_name, s_name, ps_availqty
+  FROM region
+  LEFT OUTER JOIN nation ON r_regionkey = n_regionkey
+  LEFT OUTER JOIN supplier ON n_nationkey = s_nationkey
+  LEFT OUTER JOIN partsupp ON s_suppkey = ps_suppkey;
+comment: |
+  df1 <- left_join(df_region, df_nation, by=c('r_regionkey' = 'n_regionkey'))
+  df2 <- left_join(df1, df_supplier, by=c('n_nationkey' = 's_nationkey'))
+  df3 <- left_join(df2, df_partsupp, by=c('s_suppkey' = 'ps_suppkey'))
+  out <- df3 %>% select(r_name, n_name, s_name, ps_availqty) %>% arrange(r_name, n_name, s_name, ps_availqty)

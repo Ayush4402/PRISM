@@ -1,0 +1,39 @@
+db: tests-examples/textbook/tables/20.sqlite3
+inputs:
+  - tests-examples/textbook/tables/20-1.txt
+  - tests-examples/textbook/tables/20-2.txt
+  - tests-examples/textbook/tables/20-3.txt
+output: tests-examples/textbook/tables/20.out
+constants:
+  - red
+  - green
+columns:
+  - color
+bools:
+  - ==
+loc: 4
+solution:
+  - natural_join3
+  - filter
+  - filter
+  - inner_join
+sql: |
+  SELECT DISTINCT S.S_name
+  FROM "20-1" AS C JOIN "20-2" AS P JOIN "20-3" AS S
+  WHERE C.P_id = P.P_id
+    AND C.S_key = S.S_key
+    AND P.color = 'red'
+  INTERSECT
+  SELECT DISTINCT S1.S_name
+  FROM "20-1" AS C1 JOIN "20-2" AS P1 JOIN "20-3" AS S1
+  WHERE C1.P_id = P1.P_id
+    AND C1.S_key = S1.S_key
+    AND P1.color = 'green'
+comment: |
+  # 5.2.8 optimal solution
+
+  df4 <- inner_join(input1, input2) %>% inner_join(input3)
+  df5 <- df4 %>% filter(color == 'red')
+  df6 <- df4 %>% filter(color == 'green')
+  df7 <- inner_join(df5, df6, by=c('S_key','S_name'), suffix = c('', '.other'))
+  out <- df7 %>% select(S_name) %>% distinct() %>% arrange(S_name)
