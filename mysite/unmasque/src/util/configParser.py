@@ -21,7 +21,7 @@ class Config:
         self.use_index = False
         self.scale_retry = 0
         self.sf = 1  # Default 1
-        self.workmem = None
+        self.workmem = '32MB'
         self.limit_limit = 1000
         self.database = "postgres"
         # self.index_maker = "create_indexes.sql"

@@ -1238,6 +1238,14 @@ def oj_chain(k):
     joins = "".join(f" LEFT OUTER JOIN {t} ON {on}" for t, _, on in OJ_SPEC[1:k + 1])
     return f"SELECT {sel} FROM region{joins};"
 
+def ij_chain(k):
+    """Inner-join version of oj_chain(k): same tables, same projections, same ON conditions."""
+    sel = ", ".join(p for _, p, _ in OJ_SPEC[:k + 1])
+    joins = "".join(f" INNER JOIN {t} ON {on}" for t, _, on in OJ_SPEC[1:k + 1])
+    return f"SELECT {sel} FROM region{joins};"
+
+
+
 # Disjunction scaling workload: DJ1..DJ10 (k = number of IN values). Add before `return test_workload`.
 # Disjunction scaling workload on a string attribute: DS1..DS10 (k = number of IN values).
 # Add before `return test_workload`.
@@ -1346,6 +1354,8 @@ if __name__ == '__main__':
                  for m, s in TPCDS_3B_SIZES.items()]
     workload += [TestQuery(f"T6B{m}", tpcds_union_query(TPCDS_6B, s), False, True, False, False)
                  for m, s in TPCDS_6B_SIZES.items()]
+    workload += [TestQuery(f"IJ{k}", ij_chain(k), False, False, False, False, False)
+                 for k in range(1, 8)]
 
     workload_dict = {elem.qid: i for i, elem in enumerate(workload)}
 
