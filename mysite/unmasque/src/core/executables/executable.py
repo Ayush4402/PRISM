@@ -52,7 +52,7 @@ class Executable(Base):
             start_t = time.time()
             res, description = self.connectionHelper.execute_sql_fetchall(f_query, self.logger)
             end_t = time.time()
-            self.logger.debug(f"Exe time: {str(end_t - start_t)}")
+            self.logger.debug(f"Exe time: {end_t - start_t:.2f}")
             add_header(description, result)
             if res is not None:
                 result = get_result_as_tuple_1(res, result)
