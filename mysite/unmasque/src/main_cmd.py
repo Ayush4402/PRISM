@@ -3,7 +3,7 @@ import sys
 import traceback
 
 from .core.factory.PipeLineFactory import PipeLineFactory
-from .pipeline.abstract.TpchSanitizer import TpchSanitizer
+from .pipeline.abstract.SchemaSanitizer import SchemaSanitizer
 from .util.ConnectionFactory import ConnectionHelperFactory
 from .util.workload_queries import TestQuery
 
@@ -12,7 +12,7 @@ def signal_handler(signum, frame):
     print('You pressed Ctrl+C!')
     sigconn = ConnectionHelperFactory().createConnectionHelper()
     sigconn.connectUsingParams()
-    sanitizer = TpchSanitizer(sigconn)
+    sanitizer = SchemaSanitizer(sigconn)
     sanitizer.sanitize()
     sigconn.closeConnection()
     print("database restored!")
@@ -1192,35 +1192,7 @@ WHERE c_mktsegment = 'BUILDING';""", False, False, True, False),
             "WHERE c_mktsegment <> 'BUILDING' AND c_acctbal > 9000;", False, False, False, True, False),
         TestQuery("QN2", "SELECT o_orderkey, o_totalprice FROM orders WHERE o_orderstatus <> 'F' AND o_orderpriority <> '1-URGENT';", False, False, False, True, False)
 , TestQuery("QD2", "SELECT c_name, c_acctbal FROM customer WHERE c_mktsegment IN ('BUILDING', 'MACHINERY', 'AUTOMOBILE') AND c_acctbal > 5000;", False, False, False, False, True),
-TestQuery("nep", "SELECT l_shipmode, SUM(l_extendedprice) AS revenue FROM lineitem WHERE l_shipdate < '1994-01-01' AND l_quantity < 24 AND l_linenumber <> 4 AND l_returnflag <> 'R' GROUP BY l_shipmode LIMIT 100;", False, False, False, True, False),
-                     TestQuery("NEP1", "SELECT * FROM lineitem WHERE l_quantity <> 25;", False, False, False, True,
-                               False),
-                     TestQuery("NEP2", "SELECT * FROM lineitem WHERE l_quantity <> 25 AND l_extendedprice <> 5000.00;",
-                               False, False, False, True, False),
-                     TestQuery("NEP3",
-                               "SELECT * FROM lineitem WHERE l_quantity <> 25 AND l_extendedprice <> 5000.00 AND l_discount <> 0.05;",
-                               False, False, False, True, False),
-                     TestQuery("NEP4",
-                               "SELECT * FROM lineitem WHERE l_quantity <> 25 AND l_extendedprice <> 5000.00 AND l_discount <> 0.05 AND l_tax <> 0.04;",
-                               False, False, False, True, False),
-                     TestQuery("NEP5",
-                               "SELECT * FROM lineitem WHERE l_quantity <> 25 AND l_extendedprice <> 5000.00 AND l_discount <> 0.05 AND l_tax <> 0.04 AND l_returnflag <> 'R';",
-                               False, False, False, True, False),
-                     TestQuery("NEP6",
-                               "SELECT * FROM lineitem WHERE l_quantity <> 25 AND l_extendedprice <> 5000.00 AND l_discount <> 0.05 AND l_tax <> 0.04 AND l_returnflag <> 'R' AND l_linestatus <> 'F';",
-                               False, False, False, True, False),
-                     TestQuery("NEP7",
-                               "SELECT * FROM lineitem WHERE l_quantity <> 25 AND l_extendedprice <> 5000.00 AND l_discount <> 0.05 AND l_tax <> 0.04 AND l_returnflag <> 'R' AND l_linestatus <> 'F' AND l_shipinstruct <> 'COLLECT COD';",
-                               False, False, False, True, False),
-                     TestQuery("NEP8",
-                               "SELECT * FROM lineitem WHERE l_quantity <> 25 AND l_extendedprice <> 5000.00 AND l_discount <> 0.05 AND l_tax <> 0.04 AND l_returnflag <> 'R' AND l_linestatus <> 'F' AND l_shipinstruct <> 'COLLECT COD' AND l_shipmode <> 'AIR';",
-                               False, False, False, True, False),
-                     TestQuery("NEP9",
-                               "SELECT * FROM lineitem WHERE l_quantity <> 25 AND l_extendedprice <> 5000.00 AND l_discount <> 0.05 AND l_tax <> 0.04 AND l_returnflag <> 'R' AND l_linestatus <> 'F' AND l_shipinstruct <> 'COLLECT COD' AND l_shipmode <> 'AIR' AND l_shipdate <> '1995-06-15';",
-                               False, False, False, True, False),
-                     TestQuery("NEP10",
-                               "SELECT * FROM lineitem WHERE l_quantity <> 25 AND l_extendedprice <> 5000.00 AND l_discount <> 0.05 AND l_tax <> 0.04 AND l_returnflag <> 'R' AND l_linestatus <> 'F' AND l_shipinstruct <> 'COLLECT COD' AND l_shipmode <> 'AIR' AND l_shipdate <> '1995-06-15' AND l_commitdate <> '1995-07-01';",
-                               False, False, False, True, False),
+TestQuery("nep", "SELECT l_shipmode, SUM(l_extendedprice) AS revenue FROM lineitem WHERE l_shipdate < '1994-01-01' AND l_quantity < 24 AND l_linenumber <> 4 AND l_returnflag <> 'R' GROUP BY l_shipmode LIMIT 100;", False, False, False, True, False)
                      ]
     return test_workload
 
@@ -1336,6 +1308,37 @@ def tpcds_union_query(branches, sizes):
 
 if __name__ == '__main__':
     workload = create_workload()
+    workload += [
+        TestQuery("NEP1",
+                  "SELECT * FROM part WHERE p_size <> 20;",
+                  False, False, False, True, False),
+        TestQuery("NEP2",
+                  "SELECT * FROM part WHERE p_size <> 20 AND p_retailprice <> 1150.25;",
+                  False, False, False, True, False),
+        TestQuery("NEP3",
+                  "SELECT * FROM part WHERE p_size <> 20 AND p_retailprice <> 1150.25 AND p_brand <> 'Brand#53';",
+                  False, False, False, True, False),
+        TestQuery("NEP4",
+                  "SELECT * FROM part WHERE p_size <> 20 AND p_retailprice <> 1150.25 AND p_brand <> 'Brand#53' AND p_mfgr <> 'Manufacturer#3';",
+                  False, False, False, True, False),
+        TestQuery("NEP5",
+                  "SELECT * FROM part WHERE p_size <> 20 AND p_retailprice <> 1150.25 AND p_brand <> 'Brand#53' AND p_mfgr <> 'Manufacturer#3' AND p_type <> 'PROMO BRUSHED BRASS';",
+                  False, False, False, True, False),
+        TestQuery("NEP6",
+                  "SELECT * FROM part WHERE p_size <> 20 AND p_retailprice <> 1150.25 AND p_brand <> 'Brand#53' AND p_mfgr <> 'Manufacturer#3' AND p_type <> 'PROMO BRUSHED BRASS' AND p_container <> 'LG JAR';",
+                  False, False, False, True, False),
+        TestQuery("NEP7",
+                  "SELECT * FROM part WHERE p_size <> 20 AND p_retailprice <> 1150.25 AND p_brand <> 'Brand#53' AND p_mfgr <> 'Manufacturer#3' AND p_type <> 'PROMO BRUSHED BRASS' AND p_container <> 'LG JAR' AND p_name <> 'goldenrod lavender spring chocolate lace';",
+                  False, False, False, True, False),
+        TestQuery("NEP8",
+                  "SELECT * FROM part WHERE p_size <> 20 AND p_retailprice <> 1150.25 AND p_brand <> 'Brand#53' AND p_mfgr <> 'Manufacturer#3' AND p_type <> 'PROMO BRUSHED BRASS' AND p_container <> 'LG JAR' AND p_name <> 'goldenrod lavender spring chocolate lace' AND p_comment <> 'lar accounts amo';",
+                  False, False, False, True, False),
+        TestQuery("NEP9",
+                  "SELECT * FROM part WHERE p_size <> 20 AND p_retailprice <> 1150.25 AND p_brand <> 'Brand#53' AND p_mfgr <> 'Manufacturer#3' AND p_type <> 'PROMO BRUSHED BRASS' AND p_container <> 'LG JAR' AND p_name <> 'goldenrod lavender spring chocolate lace' AND p_comment <> 'lar accounts amo' AND p_partkey <> 500;",
+                  False, False, False, True, False),
+        TestQuery("NEP10",
+                  "SELECT * FROM part WHERE p_size <> 20 AND p_retailprice <> 1150.25 AND p_brand <> 'Brand#53' AND p_mfgr <> 'Manufacturer#3' AND p_type <> 'PROMO BRUSHED BRASS' AND p_container <> 'LG JAR' AND p_name <> 'goldenrod lavender spring chocolate lace' AND p_comment <> 'lar accounts amo' AND p_partkey <> 500 AND p_retailprice <> 1650.75;",
+                  False, False, False, True, False)]
     workload += [TestQuery(f"OJ{k}", oj_chain(k), False, False, True, False) for k in range(1, 8)]
     workload += [TestQuery(f"DS{k}", disj_str_query(k), False, False, False, False, True)
                   for k in range(1, 11)]

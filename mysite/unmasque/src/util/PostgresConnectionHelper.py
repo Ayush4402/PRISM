@@ -84,7 +84,9 @@ class PostgresConnectionHelper(AbstractConnectionHelper):
             if logger is not None:
                 logger.debug(sql, param)
             try:
-                cur.execute(sql, param)
+                fixed_query = sql.replace("'None'", "NULL")
+                cur.execute(fixed_query, param)
+                #cur.execute(sql, param)
             except Exception as e:
                 if logger is not None:
                     logger.error(str(e))
@@ -96,7 +98,9 @@ class PostgresConnectionHelper(AbstractConnectionHelper):
         if logger is not None:
             logger.debug("..cur execute.." + sql)
         try:
-            cur.execute(sql)
+            fixed_query = sql.replace("'None'", "NULL")
+            cur.execute(fixed_query)
+            #cur.execute(sql)
             res = cur.fetchall()
             des = cur.description
         except psycopg2.ProgrammingError as e:
@@ -118,7 +122,9 @@ class PostgresConnectionHelper(AbstractConnectionHelper):
             if logger is not None:
                logger.debug("..cur execute.." + sql)
             try:
-                cur.execute(sql)
+                fixed_query = sql.replace("'None'", "NULL")
+                cur.execute(fixed_query)
+                #cur.execute(sql)
             except psycopg2.ProgrammingError as e:
                 #print(e)
                 if logger is not None:
@@ -139,7 +145,9 @@ class PostgresConnectionHelper(AbstractConnectionHelper):
         if logger is not None:
             logger.debug(sql)
         try:
-            cur.execute(sql)
+            fixed_query = sql.replace("'None'", "NULL")
+            cur.execute(fixed_query)
+            #cur.execute(sql)
             prev = cur.fetchone()
             prev = prev[0]
             if isinstance(prev, Decimal):
@@ -155,7 +163,9 @@ class PostgresConnectionHelper(AbstractConnectionHelper):
         # if logger is not None:
         #    logger.debug("..cur execute.." + sql)
         try:
-            cur.execute(sql)
+            fixed_query = sql.replace("'None'", "NULL")
+            cur.execute(fixed_query)
+            #cur.execute(sql)
             prev = cur.fetchone()
         except psycopg2.ProgrammingError as e:
             if logger is not None:
