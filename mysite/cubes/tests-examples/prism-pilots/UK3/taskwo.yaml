@@ -1,0 +1,19 @@
+inputs:
+  - tests-examples/prism-pilots/UK3/tables/region.csv
+  - tests-examples/prism-pilots/UK3/tables/nation.csv
+  - tests-examples/prism-pilots/UK3/tables/supplier.csv
+  - tests-examples/prism-pilots/UK3/tables/partsupp.csv
+  - tests-examples/prism-pilots/UK3/tables/part.csv
+  - tests-examples/prism-pilots/UK3/tables/lineitem.csv
+  - tests-examples/prism-pilots/UK3/tables/orders.csv
+  - tests-examples/prism-pilots/UK3/tables/customer.csv
+output: tests-examples/prism-pilots/UK3/expected.csv
+loc: 7
+sql: |
+  (SELECT r_name, r_regionkey FROM region, nation, supplier WHERE r_regionkey = n_regionkey AND n_nationkey = s_nationkey)
+  UNION ALL
+  (SELECT ps_comment, ps_supplycost FROM partsupp, part, lineitem WHERE ps_partkey = p_partkey AND p_partkey = l_partkey)
+  UNION ALL
+  (SELECT o_clerk, o_totalprice FROM orders, customer WHERE o_custkey = c_custkey);
+comment: |
+  UK3 has no join or predicate hints in this variant.

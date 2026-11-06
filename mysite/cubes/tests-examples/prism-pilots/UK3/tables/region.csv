@@ -1,0 +1,6 @@
+r_name,r_regionkey
+Region North,10
+Region South,11
+Region East,12
+Region West,13
+Region Central,14

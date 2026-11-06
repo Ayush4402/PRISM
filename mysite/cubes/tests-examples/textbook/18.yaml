@@ -1,0 +1,34 @@
+db: tests-examples/textbook/tables/18.sqlite3
+inputs:
+  - tests-examples/textbook/tables/18-1.txt
+  - tests-examples/textbook/tables/18-3.txt
+output: tests-examples/textbook/tables/18.out
+aggrs:
+  - max
+attrs:
+  - cost
+bools:
+  - ==
+loc: 2
+solution:
+  - summarise
+  - natural_join3
+sql: |
+  SELECT C.P_id, S.S_name
+  FROM "18-3" AS S JOIN "18-1" AS C
+  WHERE C.S_key = S.S_key
+    AND C.cost = (SELECT MAX(C1.cost)
+                  FROM "18-1" AS C1
+                  WHERE C1.P_id = C.P_id)
+comment: |
+  5.2.6 optimal solution
+
+  df1 <- df_18_1 %>% group_by(P_id) %>% summarise(cost = max(cost)) %>% ungroup()
+  df2 <- inner_join(df_18_1, df1) %>% inner_join(df_18_3)
+  out <- df2 %>% select(P_id, S_name) %>% arrange(P_id)
+
+  NOT USED tests-examples/textbook/tables/18-2.txt
+
+  summarise(input0, 'cost = max(cost)', 'P_id'), natural_join3(input0, line0, input1)
+  summarise(input0, 'cost = max(cost)', 'P_id'), natural_join3(input0, input1, line0)
+

@@ -1,0 +1,6 @@
+Query: UN3
+Command: time python cubes.py tests-examples/prism-pilots/UN3/taskw.yaml
+Result: Manually terminated with Ctrl+C; no solution returned
+real: 5m49.131s
+user: 57m59.823s
+sys: 0m3.387s

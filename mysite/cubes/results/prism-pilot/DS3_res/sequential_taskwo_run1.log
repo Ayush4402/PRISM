@@ -1,0 +1,29 @@
+]633;E;python sequential.py tests-examples/prism-pilots/DS3/taskwo.yaml;1af5ac69-b972-428b-9828-3bb86b6d04b1]633;C
+------------------------------------- R Solution ---------------------------------------
+
+con <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
+df_part <- read_csv("tests-examples/prism-pilots/DS3/tables/part.csv", skip=1, col_names=c('p_partkey','p_name','p_container','p_comment'), col_types=cols(col_integer(),col_character(),col_character(),col_character()))
+df_part <- copy_to(con, df_part)
+expected_output <- read_csv("tests-examples/prism-pilots/DS3/expected.csv", skip=1, col_names=c('p_partkey','p_name','p_comment'), col_types=cols(col_integer(),col_character(),col_character()))
+
+df1 <- df_part %>% arrange(desc(p_container)) %>% head(4)
+out <- df1 %>% select(p_partkey, p_name, p_comment)
+
+
++++++++++++++++++++++++++++++++++++++ SQL Solution +++++++++++++++++++++++++++++++++++++
+
+SELECT p_partkey,
+       p_name,
+       p_comment
+FROM
+  (SELECT *
+   FROM
+     (SELECT *
+      FROM df_part
+      ORDER BY p_container DESC)
+   LIMIT 4)
+
+
+real	0m40.826s
+user	0m41.222s
+sys	0m1.073s

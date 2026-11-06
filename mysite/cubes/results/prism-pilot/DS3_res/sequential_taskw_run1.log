@@ -1,0 +1,40 @@
+]633;E;python sequential.py tests-examples/prism-pilots/DS3/taskw.yaml;1af5ac69-b972-428b-9828-3bb86b6d04b1]633;C
+------------------------------------- R Solution ---------------------------------------
+
+con <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
+df_part <- read_csv("tests-examples/prism-pilots/DS3/tables/part.csv", skip=1, col_names=c('p_partkey','p_name','p_container','p_comment'), col_types=cols(col_integer(),col_character(),col_character(),col_character()))
+df_part <- copy_to(con, df_part)
+expected_output <- read_csv("tests-examples/prism-pilots/DS3/expected.csv", skip=1, col_names=c('p_partkey','p_name','p_comment'), col_types=cols(col_integer(),col_character(),col_character()))
+
+df1 <- df_part %>% filter(p_container != 'SM BOX')
+df2 <- df1 %>% filter(p_container != 'SM CASE' & p_container != 'SM PACK')
+df3 <- anti_join(df_part, df2, by=c('p_name','p_partkey'), na_matches="never")
+out <- df3 %>% select(p_partkey, p_name, p_comment) %>% arrange(p_partkey)
+
+
++++++++++++++++++++++++++++++++++++++ SQL Solution +++++++++++++++++++++++++++++++++++++
+
+SELECT `p_partkey`,
+       `p_name`,
+       `p_comment`
+FROM
+  (SELECT *
+   FROM `df_part` AS `LHS`
+   WHERE NOT EXISTS
+       (SELECT 1
+        FROM
+          (SELECT *
+           FROM
+             (SELECT *
+              FROM `df_part`
+              WHERE (`p_container` != 'SM BOX'))
+           WHERE (`p_container` != 'SM CASE'
+                  AND `p_container` != 'SM PACK')) AS RHS
+        WHERE (LHS.p_name = RHS.p_name
+               AND LHS.p_partkey = RHS.p_partkey) ))
+ORDER BY p_partkey
+
+
+real	0m15.323s
+user	0m15.705s
+sys	0m1.026s

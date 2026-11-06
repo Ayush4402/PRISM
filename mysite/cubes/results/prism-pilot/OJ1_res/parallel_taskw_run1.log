@@ -1,0 +1,42 @@
+]633;E;python cubes.py tests-examples/prism-pilots/OJ1/taskw.yaml;1af5ac69-b972-428b-9828-3bb86b6d04b1]633;C
+------------------------------------- R Solution ---------------------------------------
+
+con <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
+df_region <- read_csv("tests-examples/prism-pilots/OJ1/tables/region.csv", skip=1, col_names=c('r_regionkey','r_name'), col_types=cols(col_integer(),col_character()))
+df_region <- copy_to(con, df_region)
+df_nation <- read_csv("tests-examples/prism-pilots/OJ1/tables/nation.csv", skip=1, col_names=c('n_name','n_regionkey'), col_types=cols(col_character(),col_integer()))
+df_nation <- copy_to(con, df_nation)
+expected_output <- read_csv("tests-examples/prism-pilots/OJ1/expected.csv", skip=1, col_names=c('r_name','n_name'), col_types=cols(col_character(),col_character()))
+
+df1 <- inner_join(df_region, df_nation, by=c('r_regionkey' = 'n_regionkey'), suffix = c('', '.other'), na_matches='never') %>% mutate(n_regionkey = r_regionkey)
+df2 <- left_join(df_region, df1, na_matches="never")
+out <- df2 %>% select(r_name, n_name) %>% arrange(r_name)
+
+
++++++++++++++++++++++++++++++++++++++ SQL Solution +++++++++++++++++++++++++++++++++++++
+
+SELECT r_name,
+       n_name
+FROM
+  (SELECT LHS.r_regionkey AS r_regionkey,
+          LHS.r_name AS r_name,
+          RHS.n_name AS n_name,
+          RHS.n_regionkey AS n_regionkey
+   FROM df_region AS LHS
+   LEFT JOIN
+     (SELECT r_regionkey,
+             r_name,
+             n_name,
+             r_regionkey AS n_regionkey
+      FROM
+        (SELECT LHS.r_regionkey AS r_regionkey,
+                LHS.r_name AS r_name,
+                RHS.n_name AS n_name
+         FROM df_region AS LHS
+         INNER JOIN df_nation AS RHS ON (LHS.r_regionkey = RHS.n_regionkey))) AS RHS ON (LHS.r_regionkey = RHS.r_regionkey
+                                                                                         AND LHS.r_name = RHS.r_name))
+ORDER BY r_name
+
+real	0m29.455s
+user	4m38.714s
+sys	0m2.159s

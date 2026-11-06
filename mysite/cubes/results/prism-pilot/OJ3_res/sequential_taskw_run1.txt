@@ -1,0 +1,7 @@
+Query: OJ3
+Command: time python sequential.py tests-examples/prism-pilots/OJ3/taskw.yaml
+Hints: join_columns
+Result: Manually terminated with Ctrl+C; no solution returned
+real: 7m22.764s
+user: 7m23.009s
+sys: 0m1.278s

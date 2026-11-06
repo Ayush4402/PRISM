@@ -1,0 +1,26 @@
+]633;E;python sequential.py tests-examples/prism-pilots/DS2/taskw.yaml;1af5ac69-b972-428b-9828-3bb86b6d04b1]633;C
+------------------------------------- R Solution ---------------------------------------
+
+con <- DBI::dbConnect(RSQLite::SQLite(), ":memory:")
+df_part <- read_csv("tests-examples/prism-pilots/DS2/tables/part.csv", skip=1, col_names=c('p_partkey','p_name','p_container','p_comment'), col_types=cols(col_integer(),col_character(),col_character(),col_character()))
+df_part <- copy_to(con, df_part)
+expected_output <- read_csv("tests-examples/prism-pilots/DS2/expected.csv", skip=1, col_names=c('p_partkey','p_name','p_comment'), col_types=cols(col_integer(),col_character(),col_character()))
+
+df1 <- df_part %>% filter(p_container == 'SM CASE' | p_container == 'SM BOX')
+out <- df1 %>% select(p_partkey, p_name, p_comment) %>% arrange(p_partkey)
+
+
++++++++++++++++++++++++++++++++++++++ SQL Solution +++++++++++++++++++++++++++++++++++++
+
+SELECT `p_partkey`,
+       `p_name`,
+       `p_comment`
+FROM `df_part`
+WHERE (`p_container` = 'SM CASE'
+       OR `p_container` = 'SM BOX')
+ORDER BY p_partkey
+
+
+real	0m2.465s
+user	0m2.863s
+sys	0m1.068s

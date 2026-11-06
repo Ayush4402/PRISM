@@ -1,0 +1,18 @@
+db: tests-examples/scythe/recent_posts/tables/023.sqlite
+inputs:
+  - tests-examples/scythe/recent_posts/tables/023.csv
+output: tests-examples/scythe/recent_posts/tables/023_o.csv
+columns:
+  - Child
+  - Parent
+sql: |-
+  SELECT t1.Child, t1.Name, t2.Child, t2.Name,
+         t3.Child, t3.Name, t4.Child, t4.Name
+  FROM "023" AS t1 LEFT JOIN
+       "023" AS t2 on t1.Child = t2.Parent LEFT JOIN
+       "023" AS t3 on t2.Child = t3.Parent LEFT JOIN
+       "023" AS t4 on t3.Child = t4.Parent
+  WHERE NOT EXISTS (SELECT 1
+                    FROM "023" c
+                    WHERE c.Child = t1.Parent
+                   );

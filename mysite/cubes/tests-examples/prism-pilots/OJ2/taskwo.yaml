@@ -1,0 +1,15 @@
+inputs:
+  - tests-examples/prism-pilots/OJ2/tables/region.csv
+  - tests-examples/prism-pilots/OJ2/tables/nation.csv
+  - tests-examples/prism-pilots/OJ2/tables/supplier.csv
+output: tests-examples/prism-pilots/OJ2/expected.csv
+loc: 2
+sql: |
+  SELECT r_name, n_name, s_name
+  FROM region
+  LEFT OUTER JOIN nation ON r_regionkey = n_regionkey
+  LEFT OUTER JOIN supplier ON n_nationkey = s_nationkey;
+comment: |
+  df1 <- left_join(df_region, df_nation, by=c('r_regionkey' = 'n_regionkey'))
+  df2 <- left_join(df1, df_supplier, by=c('n_nationkey' = 's_nationkey'))
+  out <- df2 %>% select(r_name, n_name, s_name) %>% arrange(r_name, n_name, s_name)

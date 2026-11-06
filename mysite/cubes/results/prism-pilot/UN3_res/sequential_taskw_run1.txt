@@ -1,0 +1,6 @@
+Query: UN3
+Command: time python sequential.py tests-examples/prism-pilots/UN3/taskw.yaml
+Result: Manually terminated with Ctrl+C; no solution returned
+real: 6m17.936s
+user: 6m17.825s
+sys: 0m1.126s

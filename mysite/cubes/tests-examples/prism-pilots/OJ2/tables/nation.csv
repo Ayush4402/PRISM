@@ -1,0 +1,6 @@
+n_nationkey,n_name,n_regionkey
+101,Kenya,10
+102,Egypt,10
+103,Canada,20
+104,France,40
+105,Australia,50
