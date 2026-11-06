@@ -1,0 +1,8 @@
+#OJs,steps_SF1,time_SF1_s,steps_SF10,time_SF10_s,ratio_SF10_over_SF1,SF1_source,SF10_source
+1,11,48,11.0,429.6,8.95,measured,projected
+2,30,50,34.9,399.1,7.98,measured,projected
+3,54,57,63.0,473.3,8.3,measured,projected
+4,76,58,89.2,448.5,7.73,measured,projected
+5,109,187,127.1,1695.8,9.07,measured,projected
+6,138,249,160.8,2286.2,9.18,measured,projected
+7,161,258,188.3,2307.8,8.94,measured,projected

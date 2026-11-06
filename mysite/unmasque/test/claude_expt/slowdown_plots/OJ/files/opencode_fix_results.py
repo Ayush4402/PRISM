@@ -45,7 +45,7 @@ TPCH_ROWS_SF1 = {"region": 5, "nation": 25, "supplier": 10_000, "partsupp": 800_
 
 # SF-1 readings  {#joins: (total seconds, minimizer steps, DB-minimizer seconds or None)}
 OJ = {1: (48, 11, 0.16), 2: (50, 30, 0.21), 3: (57, 54, 3), 4: (58, 76, 5), 5: (187, 109, 129), 6: (249, 138, 193), 7:(258, 161, 202)}
-IJ = {1: (106, 10, 0), 2: (110, 27, 1), 3: (132, 47, 4), 4: (127, 68, 11), 5: (153, 89, 87), 6: (183, 109, 126)}
+IJ = {1: (106, 10, 0), 2: (110, 27, 1), 3: (132, 47, 4), 4: (127, 68, 11), 5: (153, 89, 87), 6: (183, 109, 126), 7:(552,127, 495)}
 
 # toy-database timings (only the OJ6 -> OJ7 growth is used, to extrapolate the OJ7 total time)
 TOY_BASE = [1.11, 1.66, 2.11, 3.01, 4.45, 5.66, 7.6]
@@ -135,7 +135,7 @@ def plot_breakdown(ax, d, log=False, fs=16):
     for k, dx in ((5, 0.3), (6, 0.25), (7, -0.28)):     # share label in the middle of the gap between the two lines
         xl = k + dx
         ax.text(xl, (np.interp(xl, ks, Tv) + np.interp(xl, ks, Mv)) / 2, f"{d['M'][k] / d['T'][k]:.0%}",
-                ha="center", va="center", fontsize=fs - 2, color=COLORS["orange"], zorder=4)
+                ha="center", va="center", fontsize=fs - 2, color="red", zorder=4)
     ax.text(0.02, 0.62, "% = DB-minimizer share\nof the extraction time", transform=ax.transAxes,
             fontsize=fs - 4, color=COLORS["orange"], va="top")
     if log:
