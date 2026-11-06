@@ -50,11 +50,11 @@ TOY_DATASETS = [
 
 # Real dataset with partial measurements (seconds), keyed by query number.
 # (TPC-H lineitem: SF1 = 6,001,215 rows; SF10 = 59,986,052 rows)
-ANCHOR = {"name": "TPCH 1GB", "rows": 6_001_215, "measured": {3: 56.0, 8: 170.0}}
+ANCHOR = {"name": "SF 1", "rows": 6_001_215, "measured": {3: 56.0, 8: 170.0}}
 
 # Real-size datasets to predict (all queries estimated).
 TARGETS = [
-    {"name": "TPCH 10GB (est.)", "rows": 59_986_052},
+    {"name": "SF 10", "rows": 59_986_052},
 ]
 
 OUT_PREFIX = "un"            # output file prefix
@@ -144,7 +144,7 @@ def make_plot(curves, title, fname):
     fig, ax = plt.subplots(figsize=(6.4, 5))
     for i, (name, y) in enumerate(curves.items()):
         ax.plot(QUERIES, y, "o-", color=PLOT_COLORS[i % len(PLOT_COLORS)], lw=3, ms=8, label=name)
-    ax.set_xlabel("# Union Branch", fontsize=16)
+    ax.set_xlabel("# |AUX|", fontsize=16)
     ax.set_ylabel("Slow Down Factor", fontsize=16)
     ax.set_xticks(QUERIES)
     ax.set_ylim(0, max(c.max() for c in curves.values()) * 1.15)
@@ -162,12 +162,12 @@ def main():
     base = results[ANCHOR["name"]]
     # Plot A: everything divided by the anchor's FIRST query
     make_plot({n: y / base[0] for n, y in results.items()},
-              f"Normalised to {ANCHOR['name']} {QUERY_PREFIX}{QUERIES[0]}",
+              f"",
               f"{OUT_PREFIX}_plot_norm_first_point.png")
     # Plot B: everything divided by the anchor at the SAME query
-    make_plot({n: y / base for n, y in results.items()},
-              f"Normalised to {ANCHOR['name']} at same x",
-              f"{OUT_PREFIX}_plot_norm_per_x.png")
+    #make_plot({n: y / base for n, y in results.items()},
+    #          f"Normalised to {ANCHOR['name']} at same x",
+    #          f"{OUT_PREFIX}_plot_norm_per_x.png")
 
 
 if __name__ == "__main__":

@@ -1,19 +1,19 @@
 import unittest
 
-from mysite.unmasque.src.pipeline.abstract.TpchSanitizer import TpchSanitizer
+from mysite.unmasque.src.pipeline.abstract.SchemaSanitizer import SchemaSanitizer
 from mysite.unmasque.test.util.BaseTestCase import BaseTestCase
 
 
 class MyTestCase(BaseTestCase):
     def test_for_table(self):
-        sanitizer = TpchSanitizer(self.conn)
+        sanitizer = SchemaSanitizer(self.conn)
         self.conn.connectUsingParams()
         self.assertEqual('table', sanitizer.connectionHelper.is_view_or_table("lineitem").lower())  # add assertion here
         self.assertEqual('table', sanitizer.connectionHelper.is_view_or_table('lineitem').lower())  # add assertion here
         self.conn.closeConnection()
 
     def test_for_view(self):
-        sanitizer = TpchSanitizer(self.conn)
+        sanitizer = SchemaSanitizer(self.conn)
         self.conn.connectUsingParams()
         self.conn.execute_sql(["create view nation1 as select * from nation;"])
         self.assertEqual('table', sanitizer.connectionHelper.is_view_or_table("nation").lower())  # add assertion here
@@ -24,7 +24,7 @@ class MyTestCase(BaseTestCase):
         self.conn.closeConnection()
 
     def test_select_query(self):
-        sanitizer = TpchSanitizer(self.conn)
+        sanitizer = SchemaSanitizer(self.conn)
         self.conn.connectUsingParams()
         q = sanitizer.connectionHelper.get_sanitization_select_query(["count(*)"], [])
         self.assertEqual(q, "Select count(*) From information_schema.tables WHERE table_schema = 'public' "
