@@ -1359,6 +1359,45 @@ if __name__ == '__main__':
                  for m, s in TPCDS_6B_SIZES.items()]
     workload += [TestQuery(f"IJ{k}", ij_chain(k), False, False, False, False, False)
                  for k in range(1, 8)]
+    workload += [TestQuery("demo", """
+    (
+    SELECT
+        c_name AS entity_name,
+        n_name AS country,
+        o_totalprice AS price
+    FROM customer
+    RIGHT OUTER JOIN orders
+        ON c_custkey = o_custkey
+        AND c_acctbal >= o_totalprice
+        AND c_acctbal >= 9000
+    LEFT OUTER JOIN nation
+        ON c_nationkey = n_nationkey
+    WHERE o_totalprice <= 15000
+    GROUP BY n_name, c_name, o_totalprice
+    ORDER BY price, country, entity_name
+    LIMIT 10
+)
+
+UNION ALL
+
+(
+    SELECT
+        s_name AS entity_name,
+        n_name AS country,
+        AVG(l_extendedprice * (1 - l_discount)) AS price
+    FROM supplier, lineitem, orders, nation, region
+    WHERE l_suppkey = s_suppkey
+      AND l_orderkey = o_orderkey
+      AND s_nationkey = n_nationkey
+      AND n_regionkey = r_regionkey
+      AND (l_shipmode = 'AIR' OR l_shipmode = 'TRUCK')
+      AND r_name <> 'EUROPE'
+      AND o_totalprice >= s_acctbal
+      AND o_totalprice <= 15000
+    GROUP BY n_name, s_name
+    ORDER BY price DESC, country DESC, entity_name
+    LIMIT 20
+);""", False, True, True, True, True)]
 
     workload_dict = {elem.qid: i for i, elem in enumerate(workload)}
 

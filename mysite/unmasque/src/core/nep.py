@@ -1,3 +1,4 @@
+import logging
 from typing import List
 
 from .abstract.GenerationPipeLineBase import GenerationPipeLineBase
@@ -61,17 +62,25 @@ class NepComparator(ResultComparator):
         return check
 
     def insert_data_into_Qh_table(self, res_Qh, table):
-        header = res_Qh[0]
-        res_Qh_ = res_Qh[1:]
-        if res_Qh_ not in [None, 'None']:
-            for row in res_Qh_:
-                if any(val in [None, 'None'] for val in row):
-                    continue
-                ins = (tuple(row))
-                if len(res_Qh_) == 1 and len(res_Qh_[0]) == 1:
-                    self.insert_into_result_table_values(header, ins[0], table)
-                else:
-                    self.insert_into_result_table_values(header, ins, table)
+        header = str(res_Qh[0]).replace('\'', '').replace(',)', ')')
+        qualified_table = self.get_fully_qualified_table_name(table)
+        single_cell_result = len(res_Qh) == 2 and len(res_Qh[1]) == 1
+        value_rows = []
+        for row in res_Qh[1:]:
+            if any(val in (None, 'None') for val in row):
+                continue
+            if single_cell_result:
+                value = str(row[0]).replace(',)', ')').replace("'NULL'", "NULL")
+                if not value.startswith('('):
+                    value = f"('{value}')"
+            else:
+                value = str(tuple(row)).replace(',)', ')').replace("'NULL'", "NULL")
+            value_rows.append(value)
+            if len(value_rows) == self.INSERT_BATCH_SIZE:
+                self._insert_rows(qualified_table, header, value_rows)
+                value_rows = []
+        if value_rows:
+            self._insert_rows(qualified_table, header, value_rows)
 
 
 class NepMinimizer(Minimizer):
@@ -203,10 +212,12 @@ class NEP(GenerationPipeLineBase):
     def extract_params_from_args(self, args):
         return args[0][0], args[0][1]
 
-    def extract_NEP_for_table(self, tabname, query, is_for_joined):
+    def extract_NEP_for_table(self, tabname, query, is_for_joined, res=None):
         self.logger.debug("Inside get nep")
-        self.see_d_min_tab(tabname)
-        res = self.app.doJob(query)
+        if self.logger.isEnabledFor(logging.DEBUG):
+            self.see_d_min_tab(tabname)
+        if res is None:
+            res = self.app.doJob(query)
         filterAttribs = []
         if self.app.isQ_result_empty(res):
             attrib_list = self.global_all_attribs[tabname]
@@ -219,8 +230,9 @@ class NEP(GenerationPipeLineBase):
 
     def doActualJob(self, args=None):
         query, table = self.extract_params_from_args(args)
-        nonKey_filter = self.extract_NEP_for_table(table, query, False)
-        key_filter = self.extract_NEP_for_table(table, query, True)
+        res = self.app.doJob(query)
+        nonKey_filter = self.extract_NEP_for_table(table, query, False, res)
+        key_filter = self.extract_NEP_for_table(table, query, True, res)
         return nonKey_filter + key_filter
 
     def __check_per_attrib(self, attrib_list, tabname, query, filterAttribs, is_for_joined):
@@ -231,22 +243,26 @@ class NEP(GenerationPipeLineBase):
         return filterAttribs
 
     def __update_key_attib_with_val(self, tabs, attribs, value, prev):
-        for tup in list(zip(tabs, attribs)):
-            datatype = self.get_datatype(tup)
-            qoted = False if datatype in NUMBER_TYPES else True
-            self.connectionHelper.execute_sql([self.connectionHelper.queries.update_key_attrib_with_val(
-                self.get_fully_qualified_table_name(tup[0]), tup[1], value, prev, qoted)])
+        updates = []
+        for tab, attrib in zip(tabs, attribs):
+            datatype = self.get_datatype((tab, attrib))
+            qoted = datatype not in NUMBER_TYPES
+            updates.append(self.connectionHelper.queries.update_key_attrib_with_val(
+                self.get_fully_qualified_table_name(tab), attrib, value, prev, qoted))
+        if updates:
+            self.connectionHelper.execute_sql(updates)
 
     def __check_per_joined_attrib(self, attrib_list, filterAttribs, query, tabname):
         if self.joined_attribs is None:
             return
-        joined_attribs = [attrib for attrib in attrib_list if attrib in self.joined_attribs]
-        skip_attribs = []
+        joined_attrib_set = set(self.joined_attribs)
+        joined_attribs = [attrib for attrib in attrib_list if attrib in joined_attrib_set]
+        skip_attribs = set()
         for attrib in joined_attribs:
             if attrib in skip_attribs:
                 continue
             other_attribs = self.get_other_attribs_in_eqJoin_grp(attrib)
-            skip_attribs.extend(other_attribs)
+            skip_attribs.update(other_attribs)
             join_tabnames = [self.find_tabname_for_given_attrib(attrb) for attrb in other_attribs]
             val, prev = self.update_attrib_to_see_impact(attrib, tabname)
             self.__update_key_attib_with_val(join_tabnames, other_attribs, val, prev)
@@ -259,7 +275,8 @@ class NEP(GenerationPipeLineBase):
 
     def __check_per_single_attrib(self, attrib_list, filterAttribs, query, tabname):
         if self.joined_attribs is not None:
-            single_attribs = [attrib for attrib in attrib_list if attrib not in self.joined_attribs]
+            joined_attrib_set = set(self.joined_attribs)
+            single_attribs = [attrib for attrib in attrib_list if attrib not in joined_attrib_set]
         else:
             single_attribs = attrib_list
         for attrib in single_attribs:
