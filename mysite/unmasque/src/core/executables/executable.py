@@ -10,9 +10,9 @@ def get_result_as_tuple_1(res, result):
         if all(val is None for val in row):
             continue
 
-        # Convert all values in the row to strings and create a tuple
-        row_as_tuple = tuple(str(val) for val in row)
-        result.append(row_as_tuple)
+        # Convert all values in the row to strings and create a tuple.
+        # map runs the conversion in C instead of creating a Python generator.
+        result.append(tuple(map(str, row)))
     return result
 
 
