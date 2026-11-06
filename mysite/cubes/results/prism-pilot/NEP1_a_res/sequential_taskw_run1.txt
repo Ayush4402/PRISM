@@ -1,0 +1,13 @@
+Query: NEP1_a
+Command: time python sequential.py tests-examples/prism-pilots/NEP1_a/taskw.yaml
+Result: Solution found; intended filter and projection recovered
+
+Generated SQL:
+SELECT l_orderkey
+FROM df_lineitem
+WHERE (l_quantity != 25)
+ORDER BY l_orderkey;
+
+real: 0m2.076s
+user: 0m2.266s
+sys: 0m1.065s

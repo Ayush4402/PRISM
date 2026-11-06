@@ -1,0 +1,53 @@
+query_id,mode,task,run,status,elapsed_seconds,user_seconds,system_seconds,source_file,note
+DS1,sequential,taskw,1,correct_under_tpch_constraints,1.789,2.164,0.994,results/prism-pilot/DS1_res/sequential_taskw_run1.log,Same projected columns and equivalent predicate; added ordering ignored.
+DS2,sequential,taskw,1,correct_under_tpch_constraints,2.465,2.863,1.068,results/prism-pilot/DS2_res/sequential_taskw_run1.log,Same projected columns and equivalent predicate; added ordering ignored.
+DS3,sequential,taskw,1,correct_under_tpch_constraints,15.323,15.705,1.026,results/prism-pilot/DS3_res/sequential_taskw_run1.log,"Anti-join removes precisely the complement of the target IN set, assuming unique p_partkey and non-NULL p_name and p_container."
+NEP1_a,sequential,taskw,1,correct_under_tpch_constraints,2.076,2.266,1.065,results/prism-pilot/NEP1_a_res/sequential_taskw_run1.txt,Same projected columns and equivalent predicate; added ordering ignored.
+NEP2_a,sequential,taskw,1,correct_under_tpch_constraints,4.717,5.098,1.073,results/prism-pilot/NEP2_a_res/sequential_taskw_run1.txt,Same projected columns and equivalent predicate; added ordering ignored.
+NEP3_a,sequential,taskw,1,incorrect,145.949,145.910,1.610,results/prism-pilot/NEP3_a_res/sequential_taskw_run1.txt,"Quantity 10, price 4000, discount 0.07: target includes this row; candidate price > 5000 excludes it."
+OJ1,sequential,taskw,1,interrupted,678.597,679.169,1.207,results/prism-pilot/OJ1_res/sequential_taskw_run1.txt,
+OJ2,sequential,taskw,1,interrupted,442.576,442.789,1.548,results/prism-pilot/OJ2_res/sequential_taskw_run1.txt,
+OJ3,sequential,taskw,1,interrupted,442.764,443.009,1.278,results/prism-pilot/OJ3_res/sequential_taskw_run1.txt,
+UK3,sequential,taskw,1,interrupted,254.201,251.071,4.653,results/prism-pilot/UK3_res/sequential_taskw_run1.txt,
+UK_a,sequential,taskw,1,interrupted,596.092,596.507,1.620,results/prism-pilot/UK_a_res/sequential_taskw_run1.txt,
+UN3,sequential,taskw,1,interrupted,377.936,377.825,1.126,results/prism-pilot/UN3_res/sequential_taskw_run1.txt,
+UN_a,sequential,taskw,1,sql_conversion_failed,1.765,2.204,1.059,results/prism-pilot/UN_a_res/sequential_taskw_run1.txt,"Intended UNION ALL operation represented; based on generated R, not execution of R in this audit."
+DS1,parallel,taskw,1,correct_under_tpch_constraints,1.856,3.703,1.433,results/prism-pilot/DS1_res/parallel_taskw_run1.log,Same projected columns and equivalent predicate; added ordering ignored.
+DS2,parallel,taskw,1,correct_under_tpch_constraints,1.827,3.824,1.360,results/prism-pilot/DS2_res/parallel_taskw_run1.log,Same projected columns and equivalent predicate; added ordering ignored.
+DS3,parallel,taskw,1,incorrect,7.042,57.424,1.745,results/prism-pilot/DS3_res/parallel_taskw_run1.log,One qualifying part and no excluded containers: target returns one; candidate cross joins an empty RHS and returns zero.
+NEP1_a,parallel,taskw,1,correct_under_tpch_constraints,1.753,3.127,1.296,results/prism-pilot/NEP1_a_res/parallel_taskw_run1.txt,Same projected columns and equivalent predicate; added ordering ignored.
+NEP2_a,parallel,taskw,1,incorrect,3.266,17.511,1.602,results/prism-pilot/NEP2_a_res/parallel_taskw_run1.txt,"Quantity 10, price 4000, discount 0.07: target includes this row; candidate price > 5000 excludes it."
+NEP3_a,parallel,taskw,1,incorrect,140.569,1388.587,4.550,results/prism-pilot/NEP3_a_res/parallel_taskw_run1.txt,"Quantity 10, price 5000, discount 0.01: target excludes this row; candidate includes it."
+OJ1,parallel,taskw,1,correct_under_tpch_constraints,29.455,278.714,2.159,results/prism-pilot/OJ1_res/parallel_taskw_run1.log,Inner-join followed by left-join reconstructs the target under unique r_regionkey and non-NULL r_name.
+OJ2,parallel,taskw,1,interrupted,895.533,8934.728,11.323,results/prism-pilot/OJ2_res/parallel_taskw_run1.txt,
+OJ3,parallel,taskw,1,interrupted,774.164,7721.416,8.235,results/prism-pilot/OJ3_res/parallel_taskw_run1.txt,
+UK3,parallel,taskw,1,interrupted,406.752,4020.821,34.377,results/prism-pilot/UK3_res/parallel_taskw_run1.txt,
+UK_a,parallel,taskw,1,sql_conversion_failed,33.782,324.727,2.073,results/prism-pilot/UK_a_res/parallel_taskw_run1.txt,"Intended UNION ALL operation represented; based on generated R, not execution of R in this audit."
+UN3,parallel,taskw,1,interrupted,349.131,3479.823,3.387,results/prism-pilot/UN3_res/parallel_taskw_run1.txt,
+UN_a,parallel,taskw,1,sql_conversion_failed,1.796,3.207,1.407,results/prism-pilot/UN_a_res/parallel_taskw_run1.txt,"Intended UNION ALL operation represented; based on generated R, not execution of R in this audit."
+DS1,sequential,taskwo,1,incorrect,40.889,41.155,0.903,results/prism-pilot/DS1_res/sequential_taskwo_run1.log,Six qualifying parts: the target returns six; the candidate LIMIT truncates the result.
+DS2,sequential,taskwo,1,incorrect,40.826,41.229,0.892,results/prism-pilot/DS2_res/sequential_taskwo_run1.log,Six qualifying parts: the target returns six; the candidate LIMIT truncates the result.
+DS3,sequential,taskwo,1,incorrect,40.826,41.222,1.073,results/prism-pilot/DS3_res/sequential_taskwo_run1.log,Six qualifying parts: the target returns six; the candidate LIMIT truncates the result.
+NEP1_a,sequential,taskwo,1,interrupted,588.189,588.832,1.290,results/prism-pilot/NEP1_a_res/sequential_taskwo_run1.txt,
+NEP2_a,sequential,taskwo,1,interrupted,459.206,459.698,1.162,results/prism-pilot/NEP2_a_res/sequential_taskwo_run1.txt,
+NEP3_a,sequential,taskwo,1,interrupted,780.042,780.403,1.276,results/prism-pilot/NEP3_a_res/sequential_taskwo_run1.txt,
+OJ1,sequential,taskwo,1,correct_under_tpch_constraints,11.652,12.019,1.164,results/prism-pilot/OJ1_res/sequential_taskwo_run1.log,Inner-join followed by left-join reconstructs the target under unique r_regionkey and non-NULL r_name.
+OJ2,sequential,taskwo,1,interrupted,512.499,512.896,1.055,results/prism-pilot/OJ2_res/sequential_taskwo_run1.txt,
+OJ3,sequential,taskwo,1,interrupted,380.585,380.842,1.179,results/prism-pilot/OJ3_res/sequential_taskwo_run1.txt,
+UK3,sequential,taskwo,1,interrupted,358.886,353.472,6.952,results/prism-pilot/UK3_res/sequential_taskwo_run1.txt,
+UK_a,sequential,taskwo,1,interrupted,575.245,566.987,10.315,results/prism-pilot/UK_a_res/sequential_taskwo_run1.txt,
+UN3,sequential,taskwo,1,not_run_identical_configuration,,,,,Same YAML as taskw; not run separately.
+UN_a,sequential,taskwo,1,not_run_identical_configuration,,,,,Same YAML as taskw; not run separately.
+DS1,parallel,taskwo,1,incorrect,1.838,4.582,1.536,results/prism-pilot/DS1_res/parallel_taskwo_run1.log,Six qualifying parts: the target returns six; the candidate LIMIT truncates the result.
+DS2,parallel,taskwo,1,incorrect,1.919,4.504,1.645,results/prism-pilot/DS2_res/parallel_taskwo_run1.log,Six qualifying parts: the target returns six; the candidate LIMIT truncates the result.
+DS3,parallel,taskwo,1,incorrect,1.891,4.600,1.438,results/prism-pilot/DS3_res/parallel_taskwo_run1.log,Six qualifying parts: the target returns six; the candidate LIMIT truncates the result.
+NEP1_a,parallel,taskwo,1,interrupted,624.294,6235.872,6.766,results/prism-pilot/NEP1_a_res/parallel_taskwo_run1.txt,
+NEP2_a,parallel,taskwo,1,interrupted,1328.161,13275.741,9.277,results/prism-pilot/NEP2_a_res/parallel_taskwo_run1.txt,
+NEP3_a,parallel,taskwo,1,interrupted,305.233,3039.646,3.715,results/prism-pilot/NEP3_a_res/parallel_taskwo_run1.txt,
+OJ1,parallel,taskwo,1,correct_under_tpch_constraints,3.701,21.897,1.660,results/prism-pilot/OJ1_res/parallel_taskwo_run1.log,Inner-join followed by left-join reconstructs the target under unique r_regionkey and non-NULL r_name.
+OJ2,parallel,taskwo,1,interrupted,703.622,6994.849,4.227,results/prism-pilot/OJ2_res/parallel_taskwo_run1.txt,
+OJ3,parallel,taskwo,1,interrupted,502.242,5007.767,4.205,results/prism-pilot/OJ3_res/parallel_taskwo_run1.txt,
+UK3,parallel,taskwo,1,interrupted,408.925,4041.975,32.503,results/prism-pilot/UK3_res/parallel_taskwo_run1.txt,
+UK_a,parallel,taskwo,1,interrupted,237.732,2365.943,3.312,results/prism-pilot/UK_a_res/parallel_taskwo_run1.txt,
+UN3,parallel,taskwo,1,not_run_identical_configuration,,,,,Same YAML as taskw; not run separately.
+UN_a,parallel,taskwo,1,not_run_identical_configuration,,,,,Same YAML as taskw; not run separately.

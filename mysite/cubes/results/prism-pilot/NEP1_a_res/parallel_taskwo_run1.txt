@@ -1,0 +1,8 @@
+Query: NEP1_a
+Command: time python cubes.py tests-examples/prism-pilots/NEP1_a/taskwo.yaml
+Result: Manually terminated with Ctrl+C; no solution returned
+Terminal message: No solution found
+
+real: 10m24.294s
+user: 103m55.872s
+sys: 0m6.766s

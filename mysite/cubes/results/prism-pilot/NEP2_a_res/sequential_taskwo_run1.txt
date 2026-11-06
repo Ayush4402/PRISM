@@ -1,0 +1,8 @@
+Query: NEP2_a
+Command: time python sequential.py tests-examples/prism-pilots/NEP2_a/taskwo.yaml
+Result: Manually terminated with Ctrl+C; no solution returned
+Terminal message: No solution found
+
+real: 7m39.206s
+user: 7m39.698s
+sys: 0m1.162s

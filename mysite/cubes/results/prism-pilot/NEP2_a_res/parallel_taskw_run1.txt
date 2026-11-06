@@ -1,0 +1,16 @@
+Query: NEP2_a
+Command: time python cubes.py tests-examples/prism-pilots/NEP2_a/taskw.yaml
+Result: Candidate matches the example but is not generally equivalent to the target
+Difference: Uses l_extendedprice > 5000 instead of l_extendedprice != 5000.
+Counterexample: A row with l_quantity = 10 and l_extendedprice = 4000 satisfies the target but not the candidate.
+
+Generated SQL:
+SELECT l_orderkey
+FROM df_lineitem
+WHERE (l_quantity != 25
+       AND l_extendedprice > 5000.0)
+ORDER BY l_orderkey;
+
+real: 0m3.266s
+user: 0m17.511s
+sys: 0m1.602s

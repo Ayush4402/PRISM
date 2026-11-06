@@ -1,0 +1,20 @@
+Query: NEP3_a
+Command: time python sequential.py tests-examples/prism-pilots/NEP3_a/taskw.yaml
+Result: Candidate matches the example but is not generally equivalent to the target
+Differences: Uses price > 5000 instead of price != 5000; adds an OR condition.
+Counterexample: Quantity 10, price 4000, discount 0.07 satisfies the target but is excluded by the candidate.
+
+Generated SQL:
+SELECT l_orderkey
+FROM
+  (SELECT *
+   FROM df_lineitem
+   WHERE (l_discount != 0.05
+          OR l_extendedprice <= l_quantity))
+WHERE (l_quantity != 25
+       AND l_extendedprice > 5000.0)
+ORDER BY l_orderkey;
+
+real: 2m25.949s
+user: 2m25.910s
+sys: 0m1.610s

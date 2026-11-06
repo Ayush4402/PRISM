@@ -1,0 +1,14 @@
+inputs:
+  - tests-examples/prism-pilots/UK_a/tables/nation.csv
+  - tests-examples/prism-pilots/UK_a/tables/supplier.csv
+  - tests-examples/prism-pilots/UK_a/tables/customer.csv
+output: tests-examples/prism-pilots/UK_a/expected.csv
+loc: 3
+sql: |
+  SELECT n_name
+  FROM nation
+  INNER JOIN supplier ON n_nationkey = s_nationkey
+  UNION ALL
+  SELECT n_name
+  FROM nation
+  INNER JOIN customer ON n_nationkey = c_nationkey;

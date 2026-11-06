@@ -1,0 +1,8 @@
+Query: UK_dum2
+Command: time python cubes.py tests-examples/prism-pilots/UK_dum2/taskwo.yaml
+Result: Manually terminated with Ctrl+C; no solution returned
+Terminal message: No solution found
+
+real: 3m57.732s
+user: 39m25.943s
+sys: 0m3.312s

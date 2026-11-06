@@ -1,0 +1,18 @@
+Query: UN_dum1
+Command: time python sequential.py tests-examples/prism-pilots/UN_dum1/taskw.yaml
+Result: R solution found; SQL generation failed
+Patch applied: No
+
+Generated R transformations:
+df1 <- bind_rows(df_supplier_names, df_customer_names)
+out <- df1 %>% select(name) %>% arrange(name)
+
+SQL conversion error:
+Error while trying to convert R code to SQL.
+Error: Argument 1 must be a data frame or a named atomic vector.
+Run rlang::last_error() to see where the error occurred.
+Failed to generate SQL query
+
+real: 0m1.765s
+user: 0m2.204s
+sys: 0m1.059s

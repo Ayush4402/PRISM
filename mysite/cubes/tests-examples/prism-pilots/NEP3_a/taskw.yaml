@@ -1,0 +1,18 @@
+inputs:
+  - tests-examples/prism-pilots/NEP3_a/tables/lineitem.csv
+output: tests-examples/prism-pilots/NEP3_a/expected.csv
+columns:
+  - l_quantity
+  - l_extendedprice
+  - l_discount
+constants:
+  - 25
+  - 5000.00
+  - 0.05
+loc: 2
+sql: |
+  SELECT l_orderkey
+  FROM lineitem
+  WHERE l_quantity <> 25
+    AND l_extendedprice <> 5000.00
+    AND l_discount <> 0.05;

@@ -1,0 +1,20 @@
+Query: UK_dum2
+Command: time python cubes.py tests-examples/prism-pilots/UK_dum2/taskw.yaml
+Result: R solution found; SQL generation failed
+Assessment: Generated R joins nation with customer and supplier separately, combines the results using bind_rows, and projects n_name. This implements the target UNION ALL operation.
+
+Generated R transformations:
+df1 <- inner_join(df_nation, df_customer, by=c('n_nationkey' = 'c_nationkey'), suffix = c('', '.other'), na_matches='never') %>% mutate(c_nationkey = n_nationkey)
+df2 <- inner_join(df_nation, df_supplier, by=c('n_nationkey' = 's_nationkey'), suffix = c('', '.other'), na_matches='never') %>% mutate(s_nationkey = n_nationkey)
+df3 <- bind_rows(df2, df1)
+out <- df3 %>% select(n_name) %>% arrange(n_name)
+
+SQL conversion error:
+Error while trying to convert R code to SQL.
+Error: Argument 1 must be a data frame or a named atomic vector.
+Run rlang::last_error() to see where the error occurred.
+Failed to generate SQL query
+
+real: 0m33.782s
+user: 5m24.727s
+sys: 0m2.073s

@@ -1,0 +1,8 @@
+Query: UK_dum2
+Command: time python sequential.py tests-examples/prism-pilots/UK_dum2/taskw.yaml
+Result: Manually terminated with Ctrl+C; no solution returned
+Terminal message: No solution found
+
+real: 9m56.092s
+user: 9m56.507s
+sys: 0m1.620s

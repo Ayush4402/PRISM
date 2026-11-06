@@ -1,0 +1,27 @@
+Query: NEP3_a
+Command: time python cubes.py tests-examples/prism-pilots/NEP3_a/taskw.yaml
+Result: Candidate matches the example but is not generally equivalent to the target
+Differences: Uses different predicates and ORDER BY l_discount with LIMIT 2.
+The target has no row limit and can return more than two qualifying rows.
+
+Generated SQL:
+SELECT l_orderkey
+FROM
+  (SELECT *
+   FROM
+     (SELECT *
+      FROM
+        (SELECT *
+         FROM
+           (SELECT *
+            FROM df_lineitem
+            WHERE (l_quantity < 5000
+                   OR l_quantity != 0.05))
+         WHERE (l_quantity > 25
+                OR l_discount != 0.05))
+      ORDER BY l_discount)
+   LIMIT 2);
+
+real: 2m20.569s
+user: 23m8.587s
+sys: 0m4.550s

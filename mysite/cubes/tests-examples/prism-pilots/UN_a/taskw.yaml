@@ -1,0 +1,9 @@
+inputs:
+  - tests-examples/prism-pilots/UN_a/tables/supplier_names.csv
+  - tests-examples/prism-pilots/UN_a/tables/customer_names.csv
+output: tests-examples/prism-pilots/UN_a/expected.csv
+loc: 1
+sql: |
+  SELECT name FROM supplier_names
+  UNION ALL
+  SELECT name FROM customer_names;
