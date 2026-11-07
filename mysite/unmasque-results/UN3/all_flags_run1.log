@@ -1,0 +1,62 @@
+(SELECT s_name, s_acctbal FROM supplier) UNION ALL (SELECT c_name, c_acctbal FROM customer) UNION ALL (SELECT p_name, p_retailprice FROM part);
+Disjunction flag: True
+Flags: Scale Down False, Union True, OJ True, NEP True, CS2 False
+Union Pipeline
+seed_sample_size_per 0.32
+Start from 01:10:03.445927
+Start from 01:10:03.450263
+Error no 006, Reason: Relation not listed in pk-fk file
+Now end 01:10:03.806251
+/home/ayush/Experiments_cubes/PRISM/mysite/unmasque/src/core/view_minimizer.py:132: UserWarning: pandas only supports SQLAlchemy connectable (engine/connection) or database string URI or sqlite3 DBAPI2 connection. Other DBAPI2 objects are not tested. Please consider using SQLAlchemy.
+  sql_query = pd.read_sql_query(self.connectionHelper.queries.get_star(tabname), self.connectionHelper.conn)
+============= Given Query ===============
+(SELECT s_name, s_acctbal FROM supplier) UNION ALL (SELECT c_name, c_acctbal FROM customer) UNION ALL (SELECT p_name, p_retailprice FROM part);
+=========== Extracted Query =============
+ 
+ (Select p_name as s_name, p_retailprice as s_acctbal 
+ From part)
+ UNION ALL  
+ (Select s_name, s_acctbal 
+ From supplier)
+ UNION ALL  
+ (Select c_name as s_name, c_acctbal as s_acctbal 
+ From customer);
+================ Profile ================
+╒══════════════════════╤════════════╤═════════╕
+│ Step                 │   Time (s) │   Total │
+╞══════════════════════╪════════════╪═════════╡
+│ From Clause:         │       0.1  │      11 │
+├──────────────────────┼────────────┼─────────┤
+│ Union:               │       0.33 │       0 │
+├──────────────────────┼────────────┼─────────┤
+│ Restore DB:          │       0.01 │       0 │
+├──────────────────────┼────────────┼─────────┤
+│ Correlated Sampling: │       0    │       0 │
+├──────────────────────┼────────────┼─────────┤
+│ View Minimization:   │       0.82 │      15 │
+├──────────────────────┼────────────┼─────────┤
+│ Where Clause:        │       0.48 │      12 │
+├──────────────────────┼────────────┼─────────┤
+│ Projection:          │       0.69 │      42 │
+├──────────────────────┼────────────┼─────────┤
+│ Group BY:            │       0.5  │       6 │
+├──────────────────────┼────────────┼─────────┤
+│ Aggregation:         │       0.19 │       0 │
+├──────────────────────┼────────────┼─────────┤
+│ Order by:            │       0.59 │      12 │
+├──────────────────────┼────────────┼─────────┤
+│ Limit:               │      37.29 │       3 │
+├──────────────────────┼────────────┼─────────┤
+│ Outer Join:          │       0.31 │       0 │
+├──────────────────────┼────────────┼─────────┤
+│ NEP:                 │       0    │       0 │
+├──────────────────────┼────────────┼─────────┤
+│ Result               │       0.15 │       1 │
+│  Comparator:         │            │         │
+├──────────────────────┼────────────┼─────────┤
+│ Total:               │      42.63 │     108 │
+╘══════════════════════╧════════════╧═════════╛
+
+real	0m43.402s
+user	0m2.436s
+sys	0m0.580s

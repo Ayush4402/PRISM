@@ -1,0 +1,60 @@
+SELECT n_name FROM nation INNER JOIN supplier ON n_nationkey = s_nationkey UNION ALL SELECT n_name FROM nation INNER JOIN customer ON n_nationkey = c_nationkey;
+Disjunction flag: True
+Flags: Scale Down False, Union True, OJ True, NEP True, CS2 False
+Union Pipeline
+seed_sample_size_per 0.32
+Start from 01:05:29.514086
+Start from 01:05:29.519073
+Now end 01:05:29.623675
+/home/ayush/Experiments_cubes/PRISM/mysite/unmasque/src/core/view_minimizer.py:132: UserWarning: pandas only supports SQLAlchemy connectable (engine/connection) or database string URI or sqlite3 DBAPI2 connection. Other DBAPI2 objects are not tested. Please consider using SQLAlchemy.
+  sql_query = pd.read_sql_query(self.connectionHelper.queries.get_star(tabname), self.connectionHelper.conn)
+============= Given Query ===============
+SELECT n_name FROM nation INNER JOIN supplier ON n_nationkey = s_nationkey UNION ALL SELECT n_name FROM nation INNER JOIN customer ON n_nationkey = c_nationkey;
+=========== Extracted Query =============
+ 
+ (Select n_name 
+ From nation, supplier 
+ Where nation.n_nationkey = supplier.s_nationkey)
+ UNION ALL  
+ (Select n_name 
+ From customer, nation 
+ Where customer.c_nationkey = nation.n_nationkey);
+================ Profile ================
+╒══════════════════════╤════════════╤═════════╕
+│ Step                 │   Time (s) │   Total │
+╞══════════════════════╪════════════╪═════════╡
+│ From Clause:         │       0.09 │       8 │
+├──────────────────────┼────────────┼─────────┤
+│ Union:               │       0.08 │       0 │
+├──────────────────────┼────────────┼─────────┤
+│ Restore DB:          │       0.06 │       0 │
+├──────────────────────┼────────────┼─────────┤
+│ Correlated Sampling: │       0    │       0 │
+├──────────────────────┼────────────┼─────────┤
+│ View Minimization:   │       1.06 │      21 │
+├──────────────────────┼────────────┼─────────┤
+│ Where Clause:        │       0.81 │      24 │
+├──────────────────────┼────────────┼─────────┤
+│ Projection:          │       0.49 │      16 │
+├──────────────────────┼────────────┼─────────┤
+│ Group BY:            │       0.72 │       6 │
+├──────────────────────┼────────────┼─────────┤
+│ Aggregation:         │       0.21 │       0 │
+├──────────────────────┼────────────┼─────────┤
+│ Order by:            │       0.5  │       4 │
+├──────────────────────┼────────────┼─────────┤
+│ Limit:               │      49.84 │       4 │
+├──────────────────────┼────────────┼─────────┤
+│ Outer Join:          │       0.28 │       0 │
+├──────────────────────┼────────────┼─────────┤
+│ NEP:                 │       0    │       0 │
+├──────────────────────┼────────────┼─────────┤
+│ Result               │       0.03 │       1 │
+│  Comparator:         │            │         │
+├──────────────────────┼────────────┼─────────┤
+│ Total:               │      55.14 │      88 │
+╘══════════════════════╧════════════╧═════════╛
+
+real	0m55.873s
+user	0m2.207s
+sys	0m0.472s

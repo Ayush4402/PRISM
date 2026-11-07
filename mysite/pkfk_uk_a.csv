@@ -1,0 +1,4 @@
+TABLE_NAME,ATTRIBUTE_NAME,IS_PK,IS_FK,REFERENCING_TABLE,REFERENCING_ATTRIBUTE
+nation,n_nationkey,y,n,,
+supplier,s_nationkey,n,y,nation,n_nationkey
+customer,c_nationkey,n,y,nation,n_nationkey

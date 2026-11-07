@@ -1,0 +1,55 @@
+SELECT p_partkey, p_name, p_comment FROM part WHERE p_container IN ('SM CASE');
+Disjunction flag: True
+Flags: Scale Down False, Union False, OJ False, NEP False, CS2 False
+Extraction Pipeline
+seed_sample_size_per 0.32
+Start from 00:37:17.179639
+/home/ayush/Experiments_cubes/PRISM/mysite/unmasque/src/core/view_minimizer.py:132: UserWarning: pandas only supports SQLAlchemy connectable (engine/connection) or database string URI or sqlite3 DBAPI2 connection. Other DBAPI2 objects are not tested. Please consider using SQLAlchemy.
+  sql_query = pd.read_sql_query(self.connectionHelper.queries.get_star(tabname), self.connectionHelper.conn)
+Error no 001, Reason: Query giving non-populated result :(
+============= Given Query ===============
+SELECT p_partkey, p_name, p_comment FROM part WHERE p_container IN ('SM CASE');
+=========== Extracted Query =============
+ 
+ Select p_partkey, p_name, p_comment 
+ From part 
+ Where part.p_container = 'SM CASE';
+================ Profile ================
+╒══════════════════════╤════════════╤═════════╕
+│ Step                 │   Time (s) │   Total │
+╞══════════════════════╪════════════╪═════════╡
+│ From Clause:         │       0    │       1 │
+├──────────────────────┼────────────┼─────────┤
+│ Union:               │       0    │       0 │
+├──────────────────────┼────────────┼─────────┤
+│ Restore DB:          │       0.03 │       0 │
+├──────────────────────┼────────────┼─────────┤
+│ Correlated Sampling: │       0    │       0 │
+├──────────────────────┼────────────┼─────────┤
+│ View Minimization:   │       0.2  │      34 │
+├──────────────────────┼────────────┼─────────┤
+│ Where Clause:        │       0.51 │      23 │
+├──────────────────────┼────────────┼─────────┤
+│ Projection:          │       0.22 │      18 │
+├──────────────────────┼────────────┼─────────┤
+│ Group BY:            │       0.23 │       4 │
+├──────────────────────┼────────────┼─────────┤
+│ Aggregation:         │       0.07 │       0 │
+├──────────────────────┼────────────┼─────────┤
+│ Order by:            │       0.27 │       6 │
+├──────────────────────┼────────────┼─────────┤
+│ Limit:               │      12.08 │       1 │
+├──────────────────────┼────────────┼─────────┤
+│ Outer Join:          │       0    │       0 │
+├──────────────────────┼────────────┼─────────┤
+│ NEP:                 │       0    │       0 │
+├──────────────────────┼────────────┼─────────┤
+│ Result               │       0.03 │       1 │
+│  Comparator:         │            │         │
+├──────────────────────┼────────────┼─────────┤
+│ Total:               │      13.76 │      60 │
+╘══════════════════════╧════════════╧═════════╛
+
+real	0m14.504s
+user	0m1.407s
+sys	0m0.332s

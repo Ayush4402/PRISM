@@ -1,0 +1,67 @@
+(SELECT r_name, r_regionkey FROM region, nation, supplier WHERE r_regionkey = n_regionkey AND n_nationkey = s_nationkey) UNION ALL (SELECT ps_comment, ps_supplycost FROM partsupp, part, lineitem WHERE ps_partkey = p_partkey AND p_partkey = l_partkey) UNION ALL (SELECT o_clerk, o_totalprice FROM orders, customer WHERE o_custkey = c_custkey);
+Disjunction flag: False
+Flags: Scale Down False, Union True, OJ False, NEP False, CS2 False
+Union Pipeline
+seed_sample_size_per 0.32
+Start from 01:15:14.684815
+Start from 01:15:14.697357
+Error no 006, Reason: Relation not listed in pk-fk file
+Now end 01:15:20.166255
+/home/ayush/Experiments_cubes/PRISM/mysite/unmasque/src/core/view_minimizer.py:132: UserWarning: pandas only supports SQLAlchemy connectable (engine/connection) or database string URI or sqlite3 DBAPI2 connection. Other DBAPI2 objects are not tested. Please consider using SQLAlchemy.
+  sql_query = pd.read_sql_query(self.connectionHelper.queries.get_star(tabname), self.connectionHelper.conn)
+============= Given Query ===============
+(SELECT r_name, r_regionkey FROM region, nation, supplier WHERE r_regionkey = n_regionkey AND n_nationkey = s_nationkey) UNION ALL (SELECT ps_comment, ps_supplycost FROM partsupp, part, lineitem WHERE ps_partkey = p_partkey AND p_partkey = l_partkey) UNION ALL (SELECT o_clerk, o_totalprice FROM orders, customer WHERE o_custkey = c_custkey);
+=========== Extracted Query =============
+ 
+ (Select o_clerk as r_name, o_totalprice as r_regionkey 
+ From customer, orders 
+ Where customer.c_custkey = orders.o_custkey)
+ UNION ALL  
+ (Select r_name, r_regionkey 
+ From nation, region, supplier 
+ Where nation.n_regionkey = region.r_regionkey
+ and nation.n_nationkey = supplier.s_nationkey)
+ UNION ALL  
+ (Select ps_comment as r_name, ps_supplycost as r_regionkey 
+ From lineitem, part, partsupp 
+ Where lineitem.l_partkey = part.p_partkey
+ and part.p_partkey = partsupp.ps_partkey);
+================ Profile ================
+╒══════════════════════╤════════════╤═════════╕
+│ Step                 │   Time (s) │   Total │
+╞══════════════════════╪════════════╪═════════╡
+│ From Clause:         │       0.2  │      53 │
+├──────────────────────┼────────────┼─────────┤
+│ Union:               │       5.39 │       0 │
+├──────────────────────┼────────────┼─────────┤
+│ Restore DB:          │       0.01 │       0 │
+├──────────────────────┼────────────┼─────────┤
+│ Correlated Sampling: │       0    │       0 │
+├──────────────────────┼────────────┼─────────┤
+│ View Minimization:   │       2.2  │      35 │
+├──────────────────────┼────────────┼─────────┤
+│ Where Clause:        │       2.31 │      54 │
+├──────────────────────┼────────────┼─────────┤
+│ Projection:          │       1.61 │      50 │
+├──────────────────────┼────────────┼─────────┤
+│ Group BY:            │       2.25 │      14 │
+├──────────────────────┼────────────┼─────────┤
+│ Aggregation:         │       0.86 │       2 │
+├──────────────────────┼────────────┼─────────┤
+│ Order by:            │       2.02 │      12 │
+├──────────────────────┼────────────┼─────────┤
+│ Limit:               │     101.62 │       8 │
+├──────────────────────┼────────────┼─────────┤
+│ Outer Join:          │       0    │       0 │
+├──────────────────────┼────────────┼─────────┤
+│ NEP:                 │       0    │       0 │
+├──────────────────────┼────────────┼─────────┤
+│ Result               │       0.16 │       1 │
+│  Comparator:         │            │         │
+├──────────────────────┼────────────┼─────────┤
+│ Total:               │     119.93 │     229 │
+╘══════════════════════╧════════════╧═════════╛
+
+real	2m0.683s
+user	0m3.244s
+sys	0m1.040s

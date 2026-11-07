@@ -1,0 +1,53 @@
+SELECT l_orderkey FROM lineitem WHERE l_quantity <> 25;
+Flags: Scale Down False, Union False, OJ False, NEP True, CS2 False
+Extraction Pipeline
+seed_sample_size_per 0.32
+Start from 23:53:47.723452
+/home/ayush/Experiments_cubes/PRISM/mysite/unmasque/src/core/view_minimizer.py:132: UserWarning: pandas only supports SQLAlchemy connectable (engine/connection) or database string URI or sqlite3 DBAPI2 connection. Other DBAPI2 objects are not tested. Please consider using SQLAlchemy.
+  sql_query = pd.read_sql_query(self.connectionHelper.queries.get_star(tabname), self.connectionHelper.conn)
+============= Given Query ===============
+SELECT l_orderkey FROM lineitem WHERE l_quantity <> 25;
+=========== Extracted Query =============
+ 
+ Select l_orderkey 
+ From lineitem 
+ Where lineitem.l_quantity <> 25;
+================ Profile ================
+╒══════════════════════╤════════════╤═════════╕
+│ Step                 │   Time (s) │   Total │
+╞══════════════════════╪════════════╪═════════╡
+│ From Clause:         │       0    │       1 │
+├──────────────────────┼────────────┼─────────┤
+│ Union:               │       0    │       0 │
+├──────────────────────┼────────────┼─────────┤
+│ Restore DB:          │       0    │       0 │
+├──────────────────────┼────────────┼─────────┤
+│ Correlated Sampling: │       0    │       0 │
+├──────────────────────┼────────────┼─────────┤
+│ View Minimization:   │       0.82 │      10 │
+├──────────────────────┼────────────┼─────────┤
+│ Where Clause:        │       0.13 │       4 │
+├──────────────────────┼────────────┼─────────┤
+│ Projection:          │       0.17 │      12 │
+├──────────────────────┼────────────┼─────────┤
+│ Group BY:            │       0.13 │       2 │
+├──────────────────────┼────────────┼─────────┤
+│ Aggregation:         │       0.05 │       0 │
+├──────────────────────┼────────────┼─────────┤
+│ Order by:            │       0.12 │       2 │
+├──────────────────────┼────────────┼─────────┤
+│ Limit:               │      11.77 │       1 │
+├──────────────────────┼────────────┼─────────┤
+│ Outer Join:          │       0    │       0 │
+├──────────────────────┼────────────┼─────────┤
+│ NEP:                 │       0.08 │       3 │
+├──────────────────────┼────────────┼─────────┤
+│ Result               │       0.03 │       1 │
+│  Comparator:         │            │         │
+├──────────────────────┼────────────┼─────────┤
+│ Total:               │      13.77 │      38 │
+╘══════════════════════╧════════════╧═════════╛
+
+real	0m14.527s
+user	0m2.024s
+sys	0m0.225s

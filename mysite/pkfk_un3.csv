@@ -1,0 +1,4 @@
+TABLE_NAME,ATTRIBUTE_NAME,IS_PK,IS_FK,REFERENCING_TABLE,REFERENCING_ATTRIBUTE
+supplier,s_name,n,n,,
+customer,c_name,n,n,,
+part,p_name,n,n,,

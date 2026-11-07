@@ -1,0 +1,10 @@
+TABLE_NAME,ATTRIBUTE_NAME,IS_PK,IS_FK,REFERENCING_TABLE,REFERENCING_ATTRIBUTE
+region,r_regionkey,y,n,,
+nation,n_nationkey,y,n,,
+nation,n_regionkey,n,y,region,r_regionkey
+supplier,s_nationkey,n,y,nation,n_nationkey
+part,p_partkey,y,n,,
+partsupp,ps_partkey,n,y,part,p_partkey
+lineitem,l_partkey,n,y,part,p_partkey
+customer,c_custkey,y,n,,
+orders,o_custkey,n,y,customer,c_custkey

@@ -1,0 +1,3 @@
+TABLE_NAME,ATTRIBUTE_NAME,IS_PK,IS_FK,REFERENCING_TABLE,REFERENCING_ATTRIBUTE
+region,r_regionkey,y,n,,
+nation,n_regionkey,n,y,region,r_regionkey

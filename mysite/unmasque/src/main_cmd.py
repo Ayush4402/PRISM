@@ -1399,6 +1399,46 @@ UNION ALL
     LIMIT 20
 );""", False, True, True, True, True)]
 
+    workload.append(
+        TestQuery(
+            "NEP1_a",
+            "SELECT l_orderkey FROM lineitem WHERE l_quantity <> 25;",
+            False, False, False, True, False
+        )
+    )
+
+    workload.append(
+        TestQuery(
+            "NEP2_a",
+            "SELECT l_orderkey FROM lineitem WHERE l_quantity <> 25 AND l_extendedprice <> 5000.00;",
+            False, False, False, True, False
+        )
+    )
+
+    workload.append(
+        TestQuery(
+            "NEP3_a",
+            "SELECT l_orderkey FROM lineitem WHERE l_quantity <> 25 AND l_extendedprice <> 5000.00 AND l_discount <> 0.05;",
+            False, False, False, True, False
+        )
+    )
+
+    workload.append(
+        TestQuery(
+            "UN_a",
+            "SELECT name FROM supplier_names UNION ALL SELECT name FROM customer_names;",
+            False, True, False, False, False
+        )
+    )
+
+    workload.append(
+        TestQuery(
+            "UK_a",
+            "SELECT n_name FROM nation INNER JOIN supplier ON n_nationkey = s_nationkey UNION ALL SELECT n_name FROM nation INNER JOIN customer ON n_nationkey = c_nationkey;",
+            False, True, False, False, False
+        )
+    )
+
     workload_dict = {elem.qid: i for i, elem in enumerate(workload)}
 
     signal.signal(signal.SIGTERM, signal_handler)
@@ -1418,6 +1458,17 @@ UNION ALL
     conn.config.detect_nep = hq.nep
     conn.config.use_cs2 = hq.cs2
     conn.config.detect_or = hq.orf
+    if "--all-flags" in sys.argv[2:]:
+        conn.config.detect_union = True
+        conn.config.detect_oj = True
+        conn.config.detect_nep = True
+        conn.config.detect_or = True
+
+    if conn.config.use_cs2:
+        raise RuntimeError("CS2 must remain disabled")
+
+    print("Disjunction flag:", conn.config.detect_or)
+
 
     print(f"Flags: Scale Down {conn.config.scale_down}, Union {conn.config.detect_union}, "
           f"OJ {conn.config.detect_oj}, NEP {conn.config.detect_nep}, CS2 {conn.config.use_cs2}")

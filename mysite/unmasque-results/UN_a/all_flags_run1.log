@@ -1,0 +1,59 @@
+SELECT name FROM supplier_names UNION ALL SELECT name FROM customer_names;
+Disjunction flag: True
+Flags: Scale Down False, Union True, OJ True, NEP True, CS2 False
+Union Pipeline
+seed_sample_size_per 0.32
+Start from 01:00:34.879165
+Start from 01:00:34.882251
+Error no 006, Reason: Relation not listed in pk-fk file
+Now end 01:00:34.963104
+/home/ayush/Experiments_cubes/PRISM/mysite/unmasque/src/core/view_minimizer.py:132: UserWarning: pandas only supports SQLAlchemy connectable (engine/connection) or database string URI or sqlite3 DBAPI2 connection. Other DBAPI2 objects are not tested. Please consider using SQLAlchemy.
+  sql_query = pd.read_sql_query(self.connectionHelper.queries.get_star(tabname), self.connectionHelper.conn)
+============= Given Query ===============
+SELECT name FROM supplier_names UNION ALL SELECT name FROM customer_names;
+=========== Extracted Query =============
+ 
+ (Select name 
+ From supplier_names)
+ UNION ALL  
+ (Select name 
+ From customer_names);
+================ Profile ================
+╒══════════════════════╤════════════╤═════════╕
+│ Step                 │   Time (s) │   Total │
+╞══════════════════════╪════════════╪═════════╡
+│ From Clause:         │       0.08 │       6 │
+├──────────────────────┼────────────┼─────────┤
+│ Union:               │       0.06 │       0 │
+├──────────────────────┼────────────┼─────────┤
+│ Restore DB:          │       0.01 │       0 │
+├──────────────────────┼────────────┼─────────┤
+│ Correlated Sampling: │       0    │       0 │
+├──────────────────────┼────────────┼─────────┤
+│ View Minimization:   │       0.44 │      10 │
+├──────────────────────┼────────────┼─────────┤
+│ Where Clause:        │       0.25 │       4 │
+├──────────────────────┼────────────┼─────────┤
+│ Projection:          │       0.19 │      12 │
+├──────────────────────┼────────────┼─────────┤
+│ Group BY:            │       0.21 │       2 │
+├──────────────────────┼────────────┼─────────┤
+│ Aggregation:         │       0.08 │       0 │
+├──────────────────────┼────────────┼─────────┤
+│ Order by:            │       0.26 │       4 │
+├──────────────────────┼────────────┼─────────┤
+│ Limit:               │      23.56 │       2 │
+├──────────────────────┼────────────┼─────────┤
+│ Outer Join:          │       0.08 │       0 │
+├──────────────────────┼────────────┼─────────┤
+│ NEP:                 │       0    │       0 │
+├──────────────────────┼────────────┼─────────┤
+│ Result               │       0.03 │       1 │
+│  Comparator:         │            │         │
+├──────────────────────┼────────────┼─────────┤
+│ Total:               │      26.07 │      45 │
+╘══════════════════════╧════════════╧═════════╛
+
+real	0m26.825s
+user	0m1.989s
+sys	0m0.317s

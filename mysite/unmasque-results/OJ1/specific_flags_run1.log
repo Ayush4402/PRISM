@@ -1,0 +1,55 @@
+SELECT r_name, n_name FROM region LEFT OUTER JOIN nation ON r_regionkey = n_regionkey;
+Disjunction flag: False
+Flags: Scale Down False, Union False, OJ True, NEP False, CS2 False
+Outer Join Pipeline
+seed_sample_size_per 0.32
+Start from 00:47:56.484365
+/home/ayush/Experiments_cubes/PRISM/mysite/unmasque/src/core/view_minimizer.py:132: UserWarning: pandas only supports SQLAlchemy connectable (engine/connection) or database string URI or sqlite3 DBAPI2 connection. Other DBAPI2 objects are not tested. Please consider using SQLAlchemy.
+  sql_query = pd.read_sql_query(self.connectionHelper.queries.get_star(tabname), self.connectionHelper.conn)
+============= Given Query ===============
+SELECT r_name, n_name FROM region LEFT OUTER JOIN nation ON r_regionkey = n_regionkey;
+=========== Extracted Query =============
+ 
+ Select r_name, n_name 
+ From  nation 
+ RIGHT OUTER JOIN  region 
+	 ON nation.n_regionkey = region.r_regionkey;
+================ Profile ================
+╒══════════════════════╤════════════╤═════════╕
+│ Step                 │   Time (s) │   Total │
+╞══════════════════════╪════════════╪═════════╡
+│ From Clause:         │       0    │       2 │
+├──────────────────────┼────────────┼─────────┤
+│ Union:               │       0    │       0 │
+├──────────────────────┼────────────┼─────────┤
+│ Restore DB:          │       0    │       0 │
+├──────────────────────┼────────────┼─────────┤
+│ Correlated Sampling: │       0    │       0 │
+├──────────────────────┼────────────┼─────────┤
+│ View Minimization:   │       0.39 │       9 │
+├──────────────────────┼────────────┼─────────┤
+│ Where Clause:        │       0.48 │      14 │
+├──────────────────────┼────────────┼─────────┤
+│ Projection:          │       0.27 │      12 │
+├──────────────────────┼────────────┼─────────┤
+│ Group BY:            │       0.36 │       4 │
+├──────────────────────┼────────────┼─────────┤
+│ Aggregation:         │       0.09 │       0 │
+├──────────────────────┼────────────┼─────────┤
+│ Order by:            │       0.36 │       4 │
+├──────────────────────┼────────────┼─────────┤
+│ Limit:               │      25.06 │       2 │
+├──────────────────────┼────────────┼─────────┤
+│ Outer Join:          │       0.2  │       5 │
+├──────────────────────┼────────────┼─────────┤
+│ NEP:                 │       0    │       0 │
+├──────────────────────┼────────────┼─────────┤
+│ Result               │       0.04 │       1 │
+│  Comparator:         │            │         │
+├──────────────────────┼────────────┼─────────┤
+│ Total:               │      27.43 │      53 │
+╘══════════════════════╧════════════╧═════════╛
+
+real	0m28.205s
+user	0m2.225s
+sys	0m0.297s
